@@ -1,0 +1,2 @@
+Contains data for bee colonies over the time period 1987-2017.
+Source: https://data.world/finley/bee-colony-statistical-data-from-1987-2017
