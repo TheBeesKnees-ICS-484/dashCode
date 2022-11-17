@@ -50,8 +50,8 @@ lowEst_df_filtered = lowEst_df_filtered.drop('Units', axis=1)
 highEst_df_filtered = highEst_df_filtered.drop('Units', axis=1)
 
 # State_FIPS_code is not needed since we have the State column
-lowEst_df_filtered = lowEst_df_filtered.drop('State_FIPS_code', axis=1)
-highEst_df_filtered = highEst_df_filtered.drop('State_FIPS_code', axis=1)
+# lowEst_df_filtered = lowEst_df_filtered.drop('State_FIPS_code', axis=1)
+# highEst_df_filtered = highEst_df_filtered.drop('State_FIPS_code', axis=1)
 
 
 # Sorting by year:
