@@ -1,2 +1,0 @@
-Contains data for effects of imidacloprid, a neonicotinoid, on bees.
-Source: https://data.nal.usda.gov/dataset/raw-data-imidacloprid-effects-native-bees
