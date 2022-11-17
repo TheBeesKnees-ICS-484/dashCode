@@ -1,2 +1,0 @@
-Contains data for pesticide usage over the time period of 1992-2017.
-Source: https://www.sciencebase.gov/catalog/item/5e95c13a82ce172707f25252
