@@ -1,4 +1,7 @@
 import pandas as pd # pip install pandas
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+import numpy as np
 
 lowEst_df = pd.read_csv("../bee_data/dataset_2/LowEstimate_AgPestUsebyCropGroup92to17_v2.txt",
                         sep="\t", header=0)
@@ -61,17 +64,25 @@ highEst_df_filtered.sort_values(by=['Year'], inplace=True)
 
 # RemovingNaN (replacing with -1 for now)
 
-# print(lowEst_df_filtered.isna().sum())
-# print(highEst_df_filtered.isna().sum())
+#print(lowEst_df_filtered.isna().sum())
+#print(highEst_df_filtered.isna().sum())
 
-#lowEst_df_filtered.fillna(value=0, inplace=True)
-#highEst_df_filtered.fillna(value=0, inplace=True)
+#lowEst_df_filtered.fillna(value=-1, inplace=True)
+#highEst_df_filtered.fillna(value=-1, inplace=True)
 
 crops = ['Soybeans','Wheat','Cotton','Vegetables_and_fruit','Rice','Orchards_and_grapes','Alfalfa','Pasture_and_hay','Other_crops']
+lowEst_imputer = IterativeImputer(missing_values=np.nan, initial_strategy='mean',
+imputation_order = 'arabic')
+lowEst_df_filtered[crops] = lowEst_imputer.fit_transform(lowEst_df_filtered[crops])
+highEst_imputer = IterativeImputer(missing_values=np.nan, initial_strategy='mean',
+imputation_order = 'arabic')
+highEst_df_filtered[crops] = highEst_imputer.fit_transform(highEst_df_filtered[crops])
 
-for crop in crops:
-    lowEst_df_filtered[crop].fillna(value=lowEst_df_filtered[crop].mean(), inplace=True)
-    highEst_df_filtered[crop].fillna(value=highEst_df_filtered[crop].mean(), inplace=True)
+# crops = ['Soybeans','Wheat','Cotton','Vegetables_and_fruit','Rice','Orchards_and_grapes','Alfalfa','Pasture_and_hay','Other_crops']
+
+#for crop in crops:
+#    lowEst_df_filtered[crop].fillna(value=lowEst_df_filtered[crop].mean(), inplace=True)
+#    highEst_df_filtered[crop].fillna(value=highEst_df_filtered[crop].mean(), inplace=True)
 
 # Reset indices in datasets
 lowEst_df_filtered.reset_index(drop=True, inplace=True)

@@ -55,6 +55,11 @@ bee_df.rename(columns={"year": "Year", "value": "Bee Count"}, inplace=True)
 
 # neonic_df.rename(columns={'Year': 'Year', 'Compound': 'Neonicotinoid'}, inplace=True)
 
+import numpy as np
+r = np.corrcoef(neonic_df['Total Neonicotinoid Amount'], bee_df['Bee Count'])
+print("Correlation matrix:", r)
+
+
 # Normalize to range 0 and 1
 bee_df['Bee Count'] = (bee_df['Bee Count']-bee_df['Bee Count'].min())/(bee_df['Bee Count'].max()-bee_df['Bee Count'].min())
 
