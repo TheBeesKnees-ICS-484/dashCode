@@ -36,14 +36,19 @@ bee_fig = px.bar(bee_df, x='Year', y='Bee Count',
 title="Bee Colony Population Over Time (1994-2017)") 
 
 # Grouped bar chart
-bee_neonic_fig = px.bar(bee_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group")
+bee_neonic_fig = px.bar(bee_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+title="Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
 
 bee_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'linear',
         tick0 = 1994,
         dtick = 1,
-        tickangle = 45
-    ))
+        tickangle = 45,
+        rangeslider=dict(
+        visible=True
+        )
+    )
+    )
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
 
