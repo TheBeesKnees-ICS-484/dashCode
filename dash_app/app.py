@@ -20,18 +20,30 @@ neonic_df = pd.read_csv("../preprocessed_bee_data/neonic_summary_chart.csv")
 # Bee colony count data
 bee_df = pd.read_csv("../preprocessed_bee_data/bee_summary_chart.csv")
 
+# Combined data
+bee_neonic_df = bee_df.copy()
 
+bee_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotinoid Amount'].copy()
 
 # Create graphs
 WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
 title="Weighted Tolerance Index (WTI) compared with co-foraging species of bees")
 
-neonic_fig = px.bar(neonic_df, x='Year', y='Neonicotinoid',
-title="Neonicotinoid Usage Over Time (1992-2017)")
+neonic_fig = px.bar(neonic_df, x='Year', y='Total Neonicotinoid Amount',
+title="Neonicotinoid Usage Over Time (1994-2017)")
 
 bee_fig = px.bar(bee_df, x='Year', y='Bee Count',
-title="Bee Colony Population Over Time (1992-2017)")
+title="Bee Colony Population Over Time (1994-2017)") 
 
+# Grouped bar chart
+bee_neonic_fig = px.bar(bee_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group")
+
+bee_neonic_fig.update_layout(xaxis=dict(
+        tickmode = 'linear',
+        tick0 = 1994,
+        dtick = 1,
+        tickangle = 45
+    ))
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
 
@@ -53,6 +65,12 @@ app.layout = dbc.Container([
         dbc.Row(
             dbc.Col(
                 dcc.Graph(figure = bee_fig),
+                width = 12
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                dcc.Graph(figure = bee_neonic_fig),
                 width = 12
             )
         )

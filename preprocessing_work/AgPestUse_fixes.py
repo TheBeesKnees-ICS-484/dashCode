@@ -64,9 +64,14 @@ highEst_df_filtered.sort_values(by=['Year'], inplace=True)
 # print(lowEst_df_filtered.isna().sum())
 # print(highEst_df_filtered.isna().sum())
 
-lowEst_df_filtered.fillna(value=-1, inplace=True)
-highEst_df_filtered.fillna(value=-1, inplace=True)
+#lowEst_df_filtered.fillna(value=0, inplace=True)
+#highEst_df_filtered.fillna(value=0, inplace=True)
 
+crops = ['Soybeans','Wheat','Cotton','Vegetables_and_fruit','Rice','Orchards_and_grapes','Alfalfa','Pasture_and_hay','Other_crops']
+
+for crop in crops:
+    lowEst_df_filtered[crop].fillna(value=lowEst_df_filtered[crop].mean(), inplace=True)
+    highEst_df_filtered[crop].fillna(value=highEst_df_filtered[crop].mean(), inplace=True)
 
 # Reset indices in datasets
 lowEst_df_filtered.reset_index(drop=True, inplace=True)
