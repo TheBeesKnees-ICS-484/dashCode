@@ -16,14 +16,16 @@ WTI_df = pd.read_csv("../preprocessed_bee_data/WTI_clean.csv")
 
 # Neonicotinoid usage data
 neonic_df = pd.read_csv("../preprocessed_bee_data/neonic_summary_chart.csv")
+neonic_df_normal = pd.read_csv("../preprocessed_bee_data/neonic_summary_chart_normalized.csv")
 
 # Bee colony count data
 bee_df = pd.read_csv("../preprocessed_bee_data/bee_summary_chart.csv")
+bee_df_normal = pd.read_csv("../preprocessed_bee_data/bee_summary_chart_normalized.csv")
 
-# Combined data
-bee_neonic_df = bee_df.copy()
+# Combined data (normalized)
+bee_neonic_df_normal = bee_df_normal.copy()
 
-bee_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotinoid Amount'].copy()
+bee_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['Total Neonicotinoid Amount'].copy()
 
 # Create graphs
 WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
@@ -36,7 +38,7 @@ bee_fig = px.bar(bee_df, x='Year', y='Bee Count',
 title="Bee Colony Population Over Time (1994-2017)") 
 
 # Grouped bar chart
-bee_neonic_fig = px.bar(bee_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+bee_neonic_fig = px.bar(bee_neonic_df_normal, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
 title="Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
 
 bee_neonic_fig.update_layout(xaxis=dict(
