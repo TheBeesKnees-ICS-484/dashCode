@@ -139,7 +139,7 @@ fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='valu
                            labels={'value':'Beez'},
                           animation_frame='year')
 fig2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-fig2.show()
+
 
 #############################
 
