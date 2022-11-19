@@ -108,7 +108,7 @@ fig1.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
     counties = json.load(response)
 
-df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county.csv")
+df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county - Copy.csv")
 #df=df[['year','period','state','state_ansi', 'ag_district_code', 'county', 'county_ansi', 'value']]
 
 stateAnsi = []
@@ -250,6 +250,10 @@ app.layout = dbc.Container(
                 dbc.Col(dcc.Graph(figure=fig1,)),
                 dbc.Col(dcc.Graph(figure=fig2,)),
             ]
+        ),
+
+        dbc.Row(
+            html.H1(""),
         ),
 
         dbc.Row(
