@@ -19,7 +19,7 @@ app = dash.Dash(external_stylesheets=[dbc.themes.SUPERHERO])
 
 filepath = str(pathlib.Path(__file__).parent.resolve())
 
-df1 = pd.read_csv("../Plotly Tests/State level map/data/bee_colony_survey_data_by_state.csv")
+df1 = pd.read_csv("Plotly Tests/State level map/data/bee_colony_survey_data_by_state.csv")
 df1=df1[['year','period','week_ending','state','state_ansi', 'watershed', 'data_item', 'value']]
 us_state_to_abbrev = {
     "Alabama": "AL",
@@ -108,7 +108,7 @@ fig1.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
     counties = json.load(response)
 
-df2 = pd.read_csv("../Plotly Tests/County Level map/data/bee_colony_census_data_by_county.csv")
+df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county.csv")
 #df=df[['year','period','state','state_ansi', 'ag_district_code', 'county', 'county_ansi', 'value']]
 
 stateAnsi = []
@@ -148,16 +148,16 @@ fig2.show()
 # Load in data
 
 # Weighted tolerance index bar chart
-WTI_df = pd.read_csv("../preprocessed_bee_data/WTI_clean.csv")
+WTI_df = pd.read_csv("preprocessed_bee_data/WTI_clean.csv")
 # print(WTI_df.head)
 
 # Neonicotinoid usage data
-neonic_df = pd.read_csv("../preprocessed_bee_data/neonic_summary_chart.csv")
-neonic_df_normal = pd.read_csv("../preprocessed_bee_data/neonic_summary_chart_normalized.csv")
+neonic_df = pd.read_csv("preprocessed_bee_data/neonic_summary_chart.csv")
+neonic_df_normal = pd.read_csv("preprocessed_bee_data/neonic_summary_chart_normalized.csv")
 
 # Bee colony count data
-bee_df = pd.read_csv("../preprocessed_bee_data/bee_summary_chart.csv")
-bee_df_normal = pd.read_csv("../preprocessed_bee_data/bee_summary_chart_normalized.csv")
+bee_df = pd.read_csv("preprocessed_bee_data/bee_summary_chart.csv")
+bee_df_normal = pd.read_csv("preprocessed_bee_data/bee_summary_chart_normalized.csv")
 
 # Combined data (normalized)
 bee_neonic_df_normal = bee_df_normal.copy()
@@ -262,6 +262,6 @@ app.layout = dbc.Container(
 )
 
 if __name__ == "__main__":
-    app.run_server(debug=True, port=8888)
+    app.run_server(debug=True)
 
 
