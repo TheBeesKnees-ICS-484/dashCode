@@ -130,7 +130,7 @@ for i in df2.county_ansi:
 df2=df2.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
 
 fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='value',
-                           color_continuous_scale="Viridis",
+                           color_continuous_scale="Viridis_r",
                            #mapbox_style="carto-positron",
                            #range_color=(0, 129731),
                            scope="usa",
