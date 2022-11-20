@@ -247,8 +247,14 @@ app.layout = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(dcc.Graph(figure=fig1,)),
-                dbc.Col(dcc.Graph(figure=fig2,)),
+                dbc.Col(
+                    dcc.Graph(figure=fig1,),
+                    width = 6,
+                ),
+                dbc.Col(
+                    dcc.Graph(figure=fig2,),
+                    width = 6,
+                ),
             ]
         ),
 
@@ -262,7 +268,8 @@ app.layout = dbc.Container(
                 width = 12
             )
         ),
-    ]
+    ],
+    fluid = True
 )
 
 if __name__ == "__main__":
