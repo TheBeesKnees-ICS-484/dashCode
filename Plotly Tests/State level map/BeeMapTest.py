@@ -5,7 +5,8 @@ import plotly.express as px
 import pandas as pd
 import pathlib
 from urllib.request import urlopen
-
+from dash.dependencies import Input, Output, State
+from dash import ctx
 filepath = str(pathlib.Path(__file__).parent.resolve())
 
 df = pd.read_csv(filepath+"\data\\bee_colony_survey_data_by_state.csv")
@@ -82,23 +83,72 @@ for i in df.state:
 df.rename({'value':'Beez'},axis=1, inplace=True)
 df=df.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
 
-fig = px.choropleth(df,
-                    locations='state', 
-                    locationmode="USA-states", 
-                    color='Beez',
-                    color_continuous_scale="Viridis_r", 
-                    scope="usa",
-                    range_color=(0,169000),
-                    animation_frame='year') #make sure 'period_begin' is string type and sorted in ascending order
-
-fig.update_layout(transition = {'duration': 9000})
-fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    dcc.Graph(figure=fig,),
+    dcc.Interval(id="animate", disabled=True),
+    dcc.Graph(id='graph-with-slider'),
+    dcc.Slider(
+        df.year.min(),
+        df.year.max(),
+        step=None,
+        value=df['year'].min(),
+        marks={str(year): str(year) for year in df['year'].unique()},
+        id='year-slider'
+    ),
+    html.Button("Play", id="play"),
 ])
+
+@app.callback(
+    Output('graph-with-slider', 'figure'),
+    Output("animate", "n_intervals"),
+    Output("year-slider", "value"),
+    Input("animate", "n_intervals"),
+    Input("year-slider", "value")
+)
+def update_figure(n, year):
+    if (ctx.triggered_id == "animate"):
+
+        if n == None:
+            n = 0
+
+        CurYear = df.year.min()+(n%((df.year.max()+1)-df.year.min()))
+        Ndf= df[df.year == CurYear]
+        year = CurYear
+        n_clicks = n
+    else:
+        Ndf= df[df.year == year]
+        n_clicks = abs(((df.year.max())-year)-((df.year.max())-df.year.min()))
+
+    title_text = str(year)+' Bee data by State'
+
+    fig = px.choropleth(Ndf,
+                        locations='state', 
+                        locationmode="USA-states", 
+                        color='Beez',
+                        color_continuous_scale="Viridis_r", 
+                        scope="usa",
+                        range_color=(0,169000),
+                        title= title_text
+    )
+    fig.update_layout(transition = {'duration': 9000})
+    #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+
+    fig.update_layout(transition_duration=500)
+
+    return fig, n_clicks, year
+
+@app.callback(
+    Output("animate", "disabled"),
+    Input("play", "n_clicks"),
+    State("animate", "disabled"),
+)
+def toggle(n, playing):
+    print(playing)
+    if n:
+        return not playing
+    return playing
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+

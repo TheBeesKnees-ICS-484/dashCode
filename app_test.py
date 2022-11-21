@@ -4,7 +4,7 @@ import dash
 import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objs as go
-from dash import Input, Output, dcc, html
+from dash import Input, Output, dcc, html, State, ctx
 
 import plotly.express as px
 import pandas as pd
@@ -90,20 +90,8 @@ for i in df1.state:
             df1.loc[count,"state"] = j
     count=count+1
 
-df1.rename({'value':'Beez'},axis=1, inplace=True)
+df1.rename({'value':'Bee Population'},axis=1, inplace=True)
 df1=df1.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
-
-fig1 = px.choropleth(df1,
-                    locations='state', 
-                    locationmode="USA-states", 
-                    color='Beez',
-                    color_continuous_scale="Viridis_r", 
-                    scope="usa",
-                    range_color=(0,169000),
-                    animation_frame='year') #make sure 'period_begin' is string type and sorted in ascending order
-
-fig1.update_layout(transition = {'duration': 9000})
-fig1.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
     counties = json.load(response)
@@ -129,6 +117,8 @@ for i in df2.county_ansi:
 
 df2=df2.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
 
+title_text2 ='Bee data by County'
+
 fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='value',
                            color_continuous_scale="Viridis_r",
                            #mapbox_style="carto-positron",
@@ -136,9 +126,10 @@ fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='valu
                            scope="usa",
                            #zoom=3, center = {"lat": 37.0902, "lon": -95.7129},
                            #opacity=0.5,
-                           labels={'value':'Beez'},
+                           title = title_text2,
+                           labels={'value':'Bee Population'},
                           animation_frame='year')
-fig2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+#fig2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
 
 #############################
@@ -248,9 +239,22 @@ app.layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(
-                    dcc.Graph(figure=fig1,),
+                    html.Div([
+                            dcc.Interval(id="animate", disabled=True),
+                            dcc.Graph(id='graph-with-slider'),
+                            dcc.Slider(
+                                df1.year.min(),
+                                df1.year.max(),
+                                step=None,
+                                value=df1['year'].min(),
+                                marks={str(year): str(year) for year in df1['year'].unique()},
+                                id='year-slider'
+                            ),
+                            html.Button("Play", id="play"),
+
+            ]),
                     width = 6,
-                ),
+            ),
                 dbc.Col(
                     dcc.Graph(figure=fig2,),
                     width = 6,
@@ -271,6 +275,55 @@ app.layout = dbc.Container(
     ],
     fluid = True
 )
+
+@app.callback(
+    Output('graph-with-slider', 'figure'),
+    Output("animate", "n_intervals"),
+    Output("year-slider", "value"),
+    Input("animate", "n_intervals"),
+    Input("year-slider", "value")
+)
+def update_figure(n, year):
+    if (ctx.triggered_id == "animate"):
+
+        if n == None:
+            n = 0
+
+        CurYear = df1.year.min()+(n%((df1.year.max()+1)-df1.year.min()))
+        Ndf= df1[df1.year == CurYear]
+        year = CurYear
+        n_clicks = n
+    else:
+        Ndf= df1[df1.year == year]
+        n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
+
+    title_text = str(year)+' Bee data by State'
+
+    fig = px.choropleth(Ndf,
+                        locations='state', 
+                        locationmode="USA-states", 
+                        color='Bee Population',
+                        color_continuous_scale="Viridis_r", 
+                        scope="usa",
+                        range_color=(0,169000),
+                        title= title_text
+    )
+    fig.update_layout(transition = {'duration': 9000})
+    #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+
+    fig.update_layout(transition_duration=500)
+
+    return fig, n_clicks, year
+
+@app.callback(
+    Output("animate", "disabled"),
+    Input("play", "n_clicks"),
+    State("animate", "disabled"),
+)
+def toggle(n, playing):
+    if n:
+        return not playing
+    return playing
 
 if __name__ == "__main__":
     app.run_server(debug=True)
