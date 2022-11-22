@@ -30,72 +30,75 @@ bee_county_df_normal = pd.read_csv("../preprocessed_bee_data/bee_colony_data/cou
 
 
 # Combined data (normalized)
+bee_state_neonic_df = bee_state_df.copy()
 bee_state_neonic_df_normal = bee_state_df_normal.copy()
 
+bee_state_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotinoid Amount'].copy()
 bee_state_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['Total Neonicotinoid Amount'].copy()
 
+bee_county_neonic_df = bee_county_df.copy()
 bee_county_neonic_df_normal = bee_county_df_normal.copy()
 
+bee_county_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotinoid Amount'].copy()
 bee_county_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['Total Neonicotinoid Amount'].copy()
 
 # Create graphs
 WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
 title="Weighted Tolerance Index (WTI) compared with co-foraging species of bees")
 
-neonic_state_fig = px.bar(neonic_df, x='Year', y='Total Neonicotinoid Amount',
-title="State Level: Neonicotinoid Usage Over Time (1994-2017)")
-neonic_state_fig.update_layout(xaxis=dict(
-        tickmode = 'linear',
-        tick0 = 1994,
-        dtick = 1,
-        tickangle = 45,
-        rangeslider=dict(
-        visible=True
-        )
-    )
-    )
+# neonic_state_fig = px.bar(neonic_df, x='Year', y='Total Neonicotinoid Amount',
+# title="State Level: Neonicotinoid Usage Over Time (1994-2017)")
+# neonic_state_fig.update_layout(xaxis=dict(
+#         tickmode = 'linear',
+#         tick0 = 1994,
+#         dtick = 1,
+#         tickangle = 45,
+#         rangeslider=dict(
+#         visible=True
+#         )
+#     )
+#     )
 
-neonic_county_fig = px.bar(neonic_df[neonic_df['Year'].isin([2002, 2007, 2012])], x='Year', y='Total Neonicotinoid Amount',
-title="County Level: Neonicotinoid Usage Over Time (1994-2017)")
-neonic_county_fig.update_layout(xaxis=dict(
-        tickmode = 'array',
-        tickvals = [2002, 2007, 2012],
-        tickangle = 45,
-        rangeslider=dict(
-        visible=True
-        )
-    )
-    )    
+# neonic_county_fig = px.bar(neonic_df[neonic_df['Year'].isin([2002, 2007, 2012])], x='Year', y='Total Neonicotinoid Amount',
+# title="County Level: Neonicotinoid Usage Over Time (1994-2017)")
+# neonic_county_fig.update_layout(xaxis=dict(
+#         tickmode = 'array',
+#         tickvals = [2002, 2007, 2012],
+#         tickangle = 45,
+#         rangeslider=dict(
+#         visible=True
+#         )
+#     )
+#     )    
 
-bee_state_fig = px.bar(bee_state_df, x='Year', y='Bee Count',
-title="State Level: Bee Colony Population Over Time (1994-2017)") 
-bee_state_fig.update_layout(xaxis=dict(
-        tickmode = 'linear',
-        tick0 = 1994,
-        dtick = 1,
-        tickangle = 45,
-        rangeslider=dict(
-        visible=True
-        )
-    )
-    )
+# bee_state_fig = px.bar(bee_state_df, x='Year', y='Bee Count',
+# title="State Level: Bee Colony Population Over Time (1994-2017)") 
+# bee_state_fig.update_layout(xaxis=dict(
+#         tickmode = 'linear',
+#         tick0 = 1994,
+#         dtick = 1,
+#         tickangle = 45,
+#         rangeslider=dict(
+#         visible=True
+#         )
+#     )
+#     )
 
-bee_county_fig = px.bar(bee_county_df, x='Year', y='Bee Count',
-title="County Level: Bee Colony Population Over Time (1994-2017)") 
-bee_county_fig.update_layout(xaxis=dict(
-        tickmode = 'array',
-        tickvals = [2002, 2007, 2012],
-        tickangle = 45,
-        rangeslider=dict(
-        visible=True
-        )
-    )
-    )    
+# bee_county_fig = px.bar(bee_county_df, x='Year', y='Bee Count',
+# title="County Level: Bee Colony Population Over Time (1994-2017)") 
+# bee_county_fig.update_layout(xaxis=dict(
+#         tickmode = 'array',
+#         tickvals = [2002, 2007, 2012],
+#         tickangle = 45,
+#         rangeslider=dict(
+#         visible=True
+#         )
+#     )
+#     )    
 
 # Grouped bar charts
-
 # State bee data neonic fig
-bee_state_neonic_fig = px.bar(bee_state_neonic_df_normal, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+bee_state_neonic_fig = px.bar(bee_state_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
 title="State Level: Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
 
 bee_state_neonic_fig.update_layout(xaxis=dict(
@@ -109,12 +112,42 @@ bee_state_neonic_fig.update_layout(xaxis=dict(
     )
     )
 
+# State bee data neonic fig normalized
+bee_state_neonic_fig_normal = px.bar(bee_state_neonic_df_normal, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+title="State Level: Normalized comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+
+bee_state_neonic_fig_normal.update_layout(xaxis=dict(
+        tickmode = 'linear',
+        tick0 = 1994,
+        dtick = 1,
+        tickangle = 45,
+        rangeslider=dict(
+        visible=True
+        )
+    )
+    )
+
 # County bee data neonic fig
-bee_county_neonic_fig = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([2002, 2007, 2012])], 
+bee_county_neonic_fig = px.bar(bee_county_neonic_df[bee_county_neonic_df['Year'].isin([2002, 2007, 2012])], 
 x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
 title="County Level: Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
 
 bee_county_neonic_fig.update_layout(xaxis=dict(
+        tickmode = 'array',
+        tickvals = [2002, 2007, 2012],
+        tickangle = 45,
+        rangeslider=dict(
+        visible=True
+        )
+    )
+    )   
+
+# County bee data neonic fig normalized
+bee_county_neonic_fig_normal = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([2002, 2007, 2012])], 
+x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+title="County Level: Normalized comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+
+bee_county_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'array',
         tickvals = [2002, 2007, 2012],
         tickangle = 45,
@@ -131,43 +164,25 @@ app.title = "The Effects of Neonicotinoids on Bees"
 app.layout = dbc.Container([
         dbc.Row(
             dbc.Col(
-                dcc.Graph(figure = WTI_fig),
-                width = 12
-            )
-        ),
-        dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure = neonic_state_fig),
-                width = 12
-            )
-        ),
-        dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure = bee_state_fig),
-                width = 12
-            )
-        ),
-        dbc.Row(
-            dbc.Col(
                 dcc.Graph(figure = bee_state_neonic_fig),
                 width = 12
             )
         ),
         dbc.Row(
             dbc.Col(
-                dcc.Graph(figure = neonic_county_fig),
-                width = 12
-            )
-        ),
-        dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure = bee_county_fig),
+                dcc.Graph(figure = bee_state_neonic_fig_normal),
                 width = 12
             )
         ),
         dbc.Row(
             dbc.Col(
                 dcc.Graph(figure = bee_county_neonic_fig),
+                width = 12
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                dcc.Graph(figure = bee_county_neonic_fig_normal),
                 width = 12
             )
         )
