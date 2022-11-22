@@ -163,30 +163,71 @@ app.title = "The Effects of Neonicotinoids on Bees"
 
 app.layout = dbc.Container([
         dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure = bee_state_neonic_fig),
+            dbc.Col([
+                dcc.RadioItems(
+                    id='selection_state',
+                    options=["Regular_s", "Normalized_s"],
+                    value='Regular_s',
+                ),
+                dcc.Loading(dcc.Graph(id="state_graph"), type="cube")],
                 width = 12
             )
         ),
         dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure = bee_state_neonic_fig_normal),
-                width = 12
-            )
-        ),
-        dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure = bee_county_neonic_fig),
-                width = 12
-            )
-        ),
-        dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure = bee_county_neonic_fig_normal),
+            dbc.Col([
+                dcc.RadioItems(
+                    id='selection_county',
+                    options=["Regular_c", "Normalized_c"],
+                    value='Regular_c',
+                ),
+                dcc.Loading(dcc.Graph(id="county_graph"), type="cube")],
                 width = 12
             )
         )
+        # dbc.Row(
+        #     dbc.Col(
+        #         dcc.Graph(figure = bee_state_neonic_fig),
+        #         width = 12
+        #     )
+        # ),
+        # dbc.Row(
+        #     dbc.Col(
+        #         dcc.Graph(figure = bee_state_neonic_fig_normal),
+        #         width = 12
+        #     )
+        # ),
+        # dbc.Row(
+        #     dbc.Col(
+        #         dcc.Graph(figure = bee_county_neonic_fig),
+        #         width = 12
+        #     )
+        # ),
+        # dbc.Row(
+        #     dbc.Col(
+        #         dcc.Graph(figure = bee_county_neonic_fig_normal),
+        #         width = 12
+        #     )
+        # )
     ], fluid = True)
+
+@app.callback(
+Output("state_graph", "figure"), 
+Output("county_graph", "figure"), 
+Input("selection_state", "value"),
+Input("selection_county", "value"))
+
+def display_animated_graph(selection1, selection2):
+    animations = {}
+
+    if (selection1 == "Regular_s"):
+        animations['selection1'] = bee_state_neonic_fig
+    else:
+        animations['selection1'] = bee_state_neonic_fig_normal
+    if (selection2 == "Regular_c"):
+        animations['selection2'] = bee_county_neonic_fig
+    else:
+        animations['selection2'] = bee_county_neonic_fig_normal
+    return animations["selection1"], animations["selection2"]
 
 if __name__ == '__main__':
     app.run_server(debug=True)
