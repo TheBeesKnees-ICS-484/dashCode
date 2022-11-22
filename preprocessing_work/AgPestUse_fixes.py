@@ -94,5 +94,5 @@ highEst_df_filtered.reset_index(drop=True, inplace=True)
 #print(highEst_df_filtered.head)
 
 # Saving cleaned data
-lowEst_df_filtered.to_csv('../preprocessed_bee_data/LowEst_AgPestUse_clean.csv')
-highEst_df_filtered.to_csv('../preprocessed_bee_data/highEst_AgPestUse_clean.csv')
+lowEst_df_filtered.to_csv('../preprocessed_bee_data/neonic_data/LowEst_AgPestUse_clean.csv')
+highEst_df_filtered.to_csv('../preprocessed_bee_data/neonic_data/highEst_AgPestUse_clean.csv')
