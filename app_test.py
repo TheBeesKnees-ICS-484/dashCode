@@ -147,38 +147,92 @@ neonic_df = pd.read_csv("preprocessed_bee_data/neonic_summary_chart.csv")
 neonic_df_normal = pd.read_csv("preprocessed_bee_data/neonic_summary_chart_normalized.csv")
 
 # Bee colony count data
-bee_df = pd.read_csv("preprocessed_bee_data/bee_summary_chart.csv")
-bee_df_normal = pd.read_csv("preprocessed_bee_data/bee_summary_chart_normalized.csv")
+
+# State Level
+bee_state_df = pd.read_csv("preprocessed_bee_data/bee_colony_data/state_level/bee_state_summary_chart.csv")
+bee_state_df_normal = pd.read_csv("preprocessed_bee_data/bee_colony_data/state_level/bee_state_summary_chart_normalized.csv")
+# County Level
+bee_county_df = pd.read_csv("preprocessed_bee_data/bee_colony_data/county_level/bee_county_summary_chart.csv")
+bee_county_df_normal = pd.read_csv("preprocessed_bee_data/bee_colony_data/county_level/bee_county_summary_chart_normalized.csv")
+
 
 # Combined data (normalized)
-bee_neonic_df_normal = bee_df_normal.copy()
+bee_state_neonic_df = bee_state_df.copy()
+bee_state_neonic_df_normal = bee_state_df_normal.copy()
 
-bee_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['Total Neonicotinoid Amount'].copy()
+bee_state_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotinoid Amount'].copy()
+bee_state_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['Total Neonicotinoid Amount'].copy()
+
+bee_county_neonic_df = bee_county_df.copy()
+bee_county_neonic_df_normal = bee_county_df_normal.copy()
+
+bee_county_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotinoid Amount'].copy()
+bee_county_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['Total Neonicotinoid Amount'].copy()
 
 # Create graphs
 WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
 title="Weighted Tolerance Index (WTI) compared with co-foraging species of bees")
 
-neonic_fig = px.bar(neonic_df, x='Year', y='Total Neonicotinoid Amount',
-title="Neonicotinoid Usage Over Time (1994-2017)")
+# Grouped bar charts
+# State bee data neonic fig
+bee_state_neonic_fig = px.bar(bee_state_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+title="State Level: Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
 
-bee_fig = px.bar(bee_df, x='Year', y='Bee Count',
-title="Bee Colony Population Over Time (1994-2017)") 
-
-# Grouped bar chart
-bee_neonic_fig = px.bar(bee_neonic_df_normal, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
-
-bee_neonic_fig.update_layout(xaxis=dict(
+bee_state_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'linear',
         tick0 = 1994,
         dtick = 1,
         tickangle = 45,
-        rangeslider=dict(
-        visible=True
-        )
+        # rangeslider=dict(
+        # visible=True
+        # )
     )
     )
+
+# State bee data neonic fig normalized
+bee_state_neonic_fig_normal = px.bar(bee_state_neonic_df_normal, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+title="State Level: Normalized comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+
+bee_state_neonic_fig_normal.update_layout(xaxis=dict(
+        tickmode = 'linear',
+        tick0 = 1994,
+        dtick = 1,
+        tickangle = 45,
+        # rangeslider=dict(
+        # visible=True
+        # )
+    )
+    )
+
+# County bee data neonic fig
+bee_county_neonic_fig = px.bar(bee_county_neonic_df[bee_county_neonic_df['Year'].isin([2002, 2007, 2012])], 
+x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+title="County Level: Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+
+bee_county_neonic_fig.update_layout(xaxis=dict(
+        tickmode = 'array',
+        tickvals = [2002, 2007, 2012],
+        tickangle = 45,
+        # rangeslider=dict(
+        # visible=True
+        # )
+    )
+    )   
+
+# County bee data neonic fig normalized
+bee_county_neonic_fig_normal = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([2002, 2007, 2012])], 
+x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+title="County Level: Normalized comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+
+bee_county_neonic_fig_normal.update_layout(xaxis=dict(
+        tickmode = 'array',
+        tickvals = [2002, 2007, 2012],
+        tickangle = 45,
+        # rangeslider=dict(
+        # visible=True
+        # )
+    )
+    ) 
 
 #########################################
 
@@ -253,28 +307,61 @@ app.layout = dbc.Container(
                             html.Button("Play", id="play"),
 
             ]),
-                    width = 6,
+                    width = 6
             ),
                 dbc.Col(
                     dcc.Graph(figure=fig2,),
-                    width = 6,
+                    width = 6
                 ),
             ]
         ),
 
         dbc.Row(
-            html.H1(""),
-        ),
-
-        dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure = bee_neonic_fig),
-                width = 12
+            [
+            dbc.Col([
+                dcc.RadioItems(
+                    id='selection_state',
+                    options={"Regular_s": "Regular", "Normalized_s": "Normalized"},
+                    value='Regular_s',
+                ),
+                dcc.Loading(dcc.Graph(id="state_graph"), type="cube")],
+                width = 6
+            ),
+            dbc.Col([
+                dcc.RadioItems(
+                    id='selection_county',
+                    options={"Regular_c": "Regular", "Normalized_c": "Normalized"},
+                    value='Regular_c',
+                ),
+                dcc.Loading(dcc.Graph(id="county_graph"), type="cube")],
+                width = 6
             )
-        ),
+        ]
+        )
     ],
     fluid = True
 )
+
+# Bar chart button callbacks
+@app.callback(
+Output("state_graph", "figure"), 
+Output("county_graph", "figure"), 
+Input("selection_state", "value"),
+Input("selection_county", "value"))
+
+def display_animated_graph(selection1, selection2):
+    animations = {}
+
+    if (selection1 == "Regular_s"):
+        animations['selection1'] = bee_state_neonic_fig
+    else:
+        animations['selection1'] = bee_state_neonic_fig_normal
+    if (selection2 == "Regular_c"):
+        animations['selection2'] = bee_county_neonic_fig
+    else:
+        animations['selection2'] = bee_county_neonic_fig_normal
+    return animations["selection1"], animations["selection2"]
+
 
 @app.callback(
     Output('graph-with-slider', 'figure'),
