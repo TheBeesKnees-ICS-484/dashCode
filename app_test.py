@@ -238,53 +238,6 @@ bee_county_neonic_fig_normal.update_layout(xaxis=dict(
 
 #########################################
 
-@app.callback(
-    Output("tab-content", "children"),
-    [Input("tabs", "active_tab"), Input("store", "data")],
-)
-def render_tab_content(active_tab, data):
-    """
-    This callback takes the 'active_tab' property as input, as well as the
-    stored graphs, and renders the tab content depending on what the value of
-    'active_tab' is.
-    """
-    if active_tab and data is not None:
-        if active_tab == "scatter":
-            return dcc.Graph(figure=data["scatter"])
-        elif active_tab == "histogram":
-            return dbc.Row(
-                [
-                    dbc.Col(dcc.Graph(figure=data["hist_1"]), width=6),
-                    dbc.Col(dcc.Graph(figure=data["hist_2"]), width=6),
-                ]
-            )
-    return "No tab selected"
-
-
-@app.callback(Output("store", "data"), [Input("button", "n_clicks")])
-def generate_graphs(n):
-    """
-    This callback generates three simple graphs from random data.
-    """
-    if not n:
-        # generate empty graphs when app loads
-        return {k: go.Figure(data=[]) for k in ["scatter", "hist_1", "hist_2"]}
-
-    # simulate expensive graph generation process
-    time.sleep(2)
-
-    # generate 100 multivariate normal samples
-    data = np.random.multivariate_normal([0, 0], [[1, 0.5], [0.5, 1]], 100)
-
-    scatter = go.Figure(
-        data=[go.Scatter(x=data[:, 0], y=data[:, 1], mode="markers")]
-    )
-    hist_1 = go.Figure(data=[go.Histogram(x=data[:, 0])])
-    hist_2 = go.Figure(data=[go.Histogram(x=data[:, 1])])
-
-    # save figures in a dictionary for sending to the dcc.Store
-    return {"scatter": scatter, "hist_1": hist_1, "hist_2": hist_2}
-
 ###########################
 
 image_filename = 'intro_material/honeybee.jpeg' 
@@ -304,7 +257,8 @@ app.layout = dbc.Container(
                         width=700,
                         height=350,
                         className="center",
-                    ), 
+                    ),
+                    width=6, 
                 ),
                 dbc.Col(
                     dbc.Alert(
@@ -326,17 +280,19 @@ app.layout = dbc.Container(
                         ],
                         color="success",
                     ),
+                    width=6,
                 )
             ],
-            align="center",
         ),
         dbc.Row(
             [
                 dbc.Col(
 
+                    width=6,
                 ),
                 dbc.Col(
-
+                    dcc.Graph(figure=WTI_fig),
+                    width=6,
                 ),
             ]
         ),
