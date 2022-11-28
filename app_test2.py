@@ -345,6 +345,7 @@ app.layout = dbc.Container(
                 width = 6
             ),
             dbc.Col([
+                html.Button("Reset", id="reset"),
                 dcc.Slider(
                     1994,
                     2017,
@@ -364,21 +365,30 @@ app.layout = dbc.Container(
 @app.callback(
     Output('graph-with-slider', 'figure'),
     Output('graph-with-slider2', 'figure'),
-
     Output("animate", "n_intervals"),
     Output("animate2", "n_intervals"),
+
+    Output('state_graph', 'figure'),
+    Output('county_graph', 'figure'),
 
     Output("year-slider", "value"),
 
     Input("animate", "n_intervals"),
     Input("animate2", "n_intervals"),
 
-    Input("year-slider", "value")
+    Input("year-slider", "value"),
+
+    # For switching between normalized and regular bar charts
+    Input("selection_state", "value"),
+    Input("selection_county", "value")
 )
-def update_figure(n, n2, year):
+def update_figure(n, n2, year, selection1, selection2):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
+
+    button_id = ctx.triggered_id if not None else 'No clicks yet'
+    print("THE ID IS ", button_id)
 
     Ndf= df1[df1.year == year]
     n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
@@ -433,29 +443,120 @@ def update_figure(n, n2, year):
 
     #fig2.update_layout(transition_duration=500)
 
-    return fig, fig2, n_clicks, n_clicks, year
-    #return fig, fig2, n_clicks, n_clicks2, year
+    ######################################################################
 
+    # State bee data neonic fig
+    fig3 = px.bar(bee_state_neonic_df[bee_state_neonic_df['Year'] == year], x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year),
+    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
-# Bar chart button callbacks
-@app.callback(
-Output("state_graph", "figure"), 
-Output("county_graph", "figure"), 
-Input("selection_state", "value"),
-Input("selection_county", "value"))
+    fig3.update_layout(xaxis=dict(
+            tickmode = 'linear',
+            tick0 = 1994,
+            dtick = 1,
+            tickangle = 90,
+            # rangeslider=dict(
+            # visible=True
+            # )
+        )
+    )
 
-def display_animated_graph(selection1, selection2):
+    fig3_normal = px.bar(bee_state_neonic_df_normal[bee_state_neonic_df_normal['Year'] == year], x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year),
+    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+
+    fig3_normal.update_layout(xaxis=dict(
+            tickmode = 'linear',
+            tick0 = 1994,
+            dtick = 1,
+            tickangle = 90,
+            # rangeslider=dict(
+            # visible=True
+            # )
+        )
+    )
+
+    ######################################################################
+
+    # County bee data neonic fig
+    fig4 = px.bar(bee_county_neonic_df[bee_county_neonic_df['Year'].isin([year2])],#[year2]], 
+    x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+
+    fig4.update_layout(xaxis=dict(
+            tickmode = 'array',
+            tickvals = [2002, 2007, 2012],
+            tickangle = 45,
+            # rangeslider=dict(
+            # visible=True
+            # )
+        )
+        )   
+
+    # County bee data neonic fig normalized
+    fig4_normal = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([year2])],#[year2]], 
+    x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+
+    bee_county_neonic_fig_normal.update_layout(xaxis=dict(
+            tickmode = 'array',
+            tickvals = [2002, 2007, 2012],
+            tickangle = 45,
+            # rangeslider=dict(
+            # visible=True
+            # )
+        )
+        )
+
+    # Update to normal / regular bar chart
+
     animations = {}
 
     if (selection1 == "Regular_s"):
-        animations['selection1'] = bee_state_neonic_fig
+        animations['selection1'] = fig3
     else:
-        animations['selection1'] = bee_state_neonic_fig_normal
+        animations['selection1'] = fig3_normal
     if (selection2 == "Regular_c"):
-        animations['selection2'] = bee_county_neonic_fig
+        animations['selection2'] = fig4
     else:
-        animations['selection2'] = bee_county_neonic_fig_normal
-    return animations["selection1"], animations["selection2"]
+        animations['selection2'] = fig4_normal
+
+
+    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year
+    #return fig, fig2, n_clicks, n_clicks2, year
+
+# @app.callback(
+#     Output("animate", "disabled"),
+#     Input("reset", "n_clicks"),
+#     State("animate", "disabled"),
+# )
+# def toggle(n, playing):
+#     print(playing)
+#     if n:
+#         return not playing
+#     return playing
+
+# Bar chart button callbacks
+# @app.callback(
+# Output("state_graph", "figure"), 
+# Output("county_graph", "figure"), 
+# Input("selection_state", "value"),
+# Input("selection_county", "value"))
+
+# def display_animated_graph(selection1, selection2):
+#     animations = {}
+
+#     if (selection1 == "Regular_s"):
+#         animations['selection1'] = bee_state_neonic_fig
+#     else:
+#         animations['selection1'] = bee_state_neonic_fig_normal
+#     if (selection2 == "Regular_c"):
+#         animations['selection2'] = bee_county_neonic_fig
+#     else:
+#         animations['selection2'] = bee_county_neonic_fig_normal
+#     return animations["selection1"], animations["selection2"]
 
 if __name__ == "__main__":
     app.run_server(debug=True)
