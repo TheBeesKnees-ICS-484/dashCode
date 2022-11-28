@@ -109,13 +109,16 @@ with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-c
 
 # NEW
 # df2 = pd.read_csv('bee_data/dataset_3/bee_colony_census_data_by_county.csv')
-# df2=df2.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
 # df2['value'] = df2['value'].replace("(D)", np.nan)
 
 # df2['value'] = df2['value'].str.replace(",", "") # For numbers with commas ex 1,000
 # df2['value'] = pd.to_numeric(df2['value'])
 
 # df2['value'] = df2['value'].replace(np.nan, df2['value'].mean())
+
+# df2 = df2[df2 != "(D)"]
+# df2 = df2.dropna(axis=0)
+# print(df2.state_ansi.unique())
 
 # OLD
 df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county_clean.csv")
@@ -418,6 +421,10 @@ app.layout = dbc.Container(
 
     Output('NeonicState', 'figure'),
 
+    # For reset button
+    Output("reset", "disabled"),
+    
+
     Input("animate", "n_intervals"),
     Input("animate2", "n_intervals"),
 
@@ -428,9 +435,13 @@ app.layout = dbc.Container(
     Input("selection_county", "value"),
 
     # For neonic data
-    Input('NStateDrop', 'value')
+    Input('NStateDrop', 'value'),
+
+    # For reset button
+    Input("reset", "n_clicks"),
+    State("reset", "disabled"),
 )
-def update_figure(n, n2, year, selection1, selection2, value):
+def update_figure(n, n2, year, selection1, selection2, value, n3, playing):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
@@ -449,6 +460,25 @@ def update_figure(n, n2, year, selection1, selection2, value):
     elif (year >= 2012):
         Ndf2= df2[df2.year == 2012]
         year2 = 2012
+
+
+    Ndf3 = bee_state_neonic_df[bee_state_neonic_df['Year'] == year]
+    Ndf3_norm = bee_state_neonic_df_normal[bee_state_neonic_df_normal['Year'] == year]
+
+    Ndf4 = bee_county_neonic_df[bee_county_neonic_df['Year'].isin([year2])]
+    Ndf4_norm = bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([year2])]
+
+    Ndf5 = df3[df3['Year'] == year]
+
+    if (n3 != None and n3 % 2 != 0):
+        Ndf = df1
+        Ndf2 = df2
+        Ndf3 = bee_state_neonic_df
+        Ndf3_norm = bee_state_neonic_df_normal
+        Ndf4 = bee_county_neonic_df
+        Ndf4_norm = bee_county_neonic_df_normal
+        Ndf5 = df3
+
 
     #n_clicks2 = abs(((df2.year.max())-year)-((df2.year.max())-df2.year.min()))
 
@@ -494,7 +524,7 @@ def update_figure(n, n2, year, selection1, selection2, value):
     ######################################################################
 
     # State bee data neonic fig
-    fig3 = px.bar(bee_state_neonic_df[bee_state_neonic_df['Year'] == year], x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    fig3 = px.bar(Ndf3, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
     title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year),
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
@@ -509,7 +539,7 @@ def update_figure(n, n2, year, selection1, selection2, value):
         )
     )
 
-    fig3_normal = px.bar(bee_state_neonic_df_normal[bee_state_neonic_df_normal['Year'] == year], x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    fig3_normal = px.bar(Ndf3_norm, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
     title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year),
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
@@ -527,7 +557,7 @@ def update_figure(n, n2, year, selection1, selection2, value):
     ######################################################################
 
     # County bee data neonic fig
-    fig4 = px.bar(bee_county_neonic_df[bee_county_neonic_df['Year'].isin([year2])],#[year2]], 
+    fig4 = px.bar(Ndf4,#[year2]], 
     x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
     title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2),
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
@@ -543,7 +573,7 @@ def update_figure(n, n2, year, selection1, selection2, value):
         )   
 
     # County bee data neonic fig normalized
-    fig4_normal = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([year2])],#[year2]], 
+    fig4_normal = px.bar(Ndf4_norm,#[year2]], 
     x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
     title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2),
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
@@ -606,7 +636,7 @@ def update_figure(n, n2, year, selection1, selection2, value):
         df3.rename({'All_Crops':'All Crops'},axis=1, inplace=True)
         rColor = max_Values_Neonic[10]
     
-    fig5 = px.choropleth(df3[df3['Year'] == year],
+    fig5 = px.choropleth(Ndf5,
                     locations='State', 
                     locationmode="USA-states", 
                     color=value,
@@ -618,19 +648,8 @@ def update_figure(n, n2, year, selection1, selection2, value):
     fig5.update_layout(transition = {'duration': 9000})
 
 
-    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year, fig5
+    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing
     #return fig, fig2, n_clicks, n_clicks2, year
-
-# @app.callback(
-#     Output("animate", "disabled"),
-#     Input("reset", "n_clicks"),
-#     State("animate", "disabled"),
-# )
-# def toggle(n, playing):
-#     print(playing)
-#     if n:
-#         return not playing
-#     return playing
 
 # Bar chart button callbacks
 # @app.callback(
