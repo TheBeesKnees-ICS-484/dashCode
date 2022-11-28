@@ -194,7 +194,7 @@ bee_state_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'linear',
         tick0 = 1994,
         dtick = 1,
-        tickangle = 45,
+        tickangle = 90,
         # rangeslider=dict(
         # visible=True
         # )
@@ -210,7 +210,7 @@ bee_state_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'linear',
         tick0 = 1994,
         dtick = 1,
-        tickangle = 45,
+        tickangle = 90,
         # rangeslider=dict(
         # visible=True
         # )
@@ -226,7 +226,7 @@ color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 bee_county_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'array',
         tickvals = [2002, 2007, 2012],
-        tickangle = 90,
+        tickangle = 45,
         # rangeslider=dict(
         # visible=True
         # )
@@ -242,7 +242,7 @@ color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 bee_county_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'array',
         tickvals = [2002, 2007, 2012],
-        tickangle = 90,
+        tickangle = 45,
         # rangeslider=dict(
         # visible=True
         # )
@@ -352,7 +352,8 @@ app.layout = dbc.Container(
                     value=1994,
                     marks={str(year): str(year) for year in df1['year'].unique()},
                     id='year-slider'
-                )])
+                ),
+                ])
         ]
         )
     ],
@@ -376,17 +377,20 @@ app.layout = dbc.Container(
 )
 def update_figure(n, n2, year):
     #print("ctx.triggered_id", ctx.triggered_id)
-    print("n", n)
-    print("n2", n2)
+    #print("n", n)
+    #print("n2", n2)
 
     Ndf= df1[df1.year == year]
     n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
     Ndf2 = df2[df2.year == 2002]
+    year2 = 2002
     if (year >= 2007 and year < 2012):
         Ndf2= df2[df2.year == 2007]
+        year2 = 2007
     elif (year >= 2012):
         Ndf2= df2[df2.year == 2012]
+        year2 = 2012
 
     #n_clicks2 = abs(((df2.year.max())-year)-((df2.year.max())-df2.year.min()))
 
@@ -411,7 +415,7 @@ def update_figure(n, n2, year):
 
     ######################################################################
 
-    title_text2 ='Bee data by County'
+    title_text2 = str(year2)+' Bee data by County'
 
     fig2 = px.choropleth(Ndf2, geojson=counties, locations='county_ansi', color='value',
                            color_continuous_scale="Viridis_r",
@@ -431,49 +435,6 @@ def update_figure(n, n2, year):
 
     return fig, fig2, n_clicks, n_clicks, year
     #return fig, fig2, n_clicks, n_clicks2, year
-
-
-# @app.callback(
-#     Output('graph-with-slider2', 'figure'),
-#     Output("animate2", "n_intervals"),
-#     Output("year-slider", "value"),
-
-#     Input("animate2", "n_intervals"),
-#     Input("year-slider", "value")
-# )
-# def update_figure2(n, year):
-#     if (ctx.triggered_id == "animate2"):
-
-#         if n == None:
-#             n = 0
-
-#         CurYear = df2.year.min()+(n%((df2.year.max()+1)-df2.year.min()))
-#         Ndf= df2[df2.year == CurYear]
-#         year = CurYear
-#         n_clicks = n
-#     else:
-#         Ndf= df2[df2.year == year]
-#         n_clicks = abs(((df2.year.max())-year)-((df1.year.max())-df2.year.min()))
-
-#     title_text = str(year)+' Bee data by County'
-
-#     fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='value',
-#                            color_continuous_scale="Viridis_r",
-#                            #mapbox_style="carto-positron",
-#                            #range_color=(0, 129731),
-#                            scope="usa",
-#                            #zoom=3, center = {"lat": 37.0902, "lon": -95.7129},
-#                            #opacity=0.5,
-#                            title = title_text2,
-#                            labels={'value':'Bee Population'},
-#                           animation_frame='year')
-    
-#     fig2.update_layout(transition = {'duration': 9000})
-#     #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-
-#     fig2.update_layout(transition_duration=500)
-
-#     return fig2, n_clicks, year
 
 
 # Bar chart button callbacks
