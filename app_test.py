@@ -95,10 +95,19 @@ for i in df1.state:
 df1.rename({'value':'Bee Population'},axis=1, inplace=True)
 df1=df1.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
 
+fig1 = px.choropleth(df1,
+                    locations='state', 
+                    locationmode="USA-states", 
+                    color='Bee Population',
+                    color_continuous_scale="Viridis_r", 
+                    scope="usa",
+                    range_color=(0,169000),
+                    animation_frame='year') #make sure 'period_begin' is string type and sorted in
+
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
     counties = json.load(response)
 
-df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county - Copy.csv")
+df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county_clean.csv")
 #df=df[['year','period','state','state_ansi', 'ag_district_code', 'county', 'county_ansi', 'value']]
 
 stateAnsi = []
@@ -299,20 +308,7 @@ app.layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(
-                    html.Div([
-                            dcc.Interval(id="animate", disabled=True),
-                            dcc.Graph(id='graph-with-slider'),
-                            dcc.Slider(
-                                df1.year.min(),
-                                df1.year.max(),
-                                step=None,
-                                value=df1['year'].min(),
-                                marks={str(year): str(year) for year in df1['year'].unique()},
-                                id='year-slider'
-                            ),
-                            html.Button("Play", id="play"),
-
-            ]),
+                    dcc.Graph(figure=fig1,),
                     width = 6
             ),
                 dbc.Col(
@@ -367,56 +363,6 @@ def display_animated_graph(selection1, selection2):
     else:
         animations['selection2'] = bee_county_neonic_fig_normal
     return animations["selection1"], animations["selection2"]
-
-
-@app.callback(
-    Output('graph-with-slider', 'figure'),
-    Output("animate", "n_intervals"),
-    Output("year-slider", "value"),
-    Input("animate", "n_intervals"),
-    Input("year-slider", "value")
-)
-def update_figure(n, year):
-    if (ctx.triggered_id == "animate"):
-
-        if n == None:
-            n = 0
-
-        CurYear = df1.year.min()+(n%((df1.year.max()+1)-df1.year.min()))
-        Ndf= df1[df1.year == CurYear]
-        year = CurYear
-        n_clicks = n
-    else:
-        Ndf= df1[df1.year == year]
-        n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
-
-    title_text = str(year)+' Bee data by State'
-
-    fig = px.choropleth(Ndf,
-                        locations='state', 
-                        locationmode="USA-states", 
-                        color='Bee Population',
-                        color_continuous_scale="Viridis_r", 
-                        scope="usa",
-                        range_color=(0,169000),
-                        title= title_text
-    )
-    fig.update_layout(transition = {'duration': 9000})
-    #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-
-    fig.update_layout(transition_duration=500)
-
-    return fig, n_clicks, year
-
-@app.callback(
-    Output("animate", "disabled"),
-    Input("play", "n_clicks"),
-    State("animate", "disabled"),
-)
-def toggle(n, playing):
-    if n:
-        return not playing
-    return playing
 
 if __name__ == "__main__":
     app.run_server(debug=True)
