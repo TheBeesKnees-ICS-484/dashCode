@@ -327,7 +327,7 @@ app.layout = dbc.Container(
                     width=6,
                 ),
                 dbc.Col(
-                    dcc.Loading(dcc.Graph(figure=WTI_fig)),
+                    dcc.Graph(figure=WTI_fig),
                     width=6,
                 ),
             ]
@@ -336,12 +336,12 @@ app.layout = dbc.Container(
             [
                 dbc.Col([
                     dcc.Interval(id="animate", disabled=True),
-                    dcc.Loading(dcc.Graph(id="graph-with-slider"))],#dcc.Graph(figure=fig1,),
+                    dcc.Graph(id="graph-with-slider")],#dcc.Graph(figure=fig1,),
                     width = 6
             ),
                 dbc.Col([
                     dcc.Interval(id="animate2", disabled=True),
-                    dcc.Loading(dcc.Graph(id="graph-with-slider2"))],#dcc.Graph(figure=fig2,),
+                    dcc.Graph(id="graph-with-slider2")],#dcc.Graph(figure=fig2,),
                     width = 6
                 ),
             ]
@@ -349,7 +349,7 @@ app.layout = dbc.Container(
         dbc.Row(
             dbc.Col(
             [
-            dcc.Loading(dcc.Graph(id='NeonicState'), type="cube"),
+            dcc.Graph(id='NeonicState'),
             dcc.Dropdown(
                 style={'color': 'black'},
                 options=[
@@ -378,7 +378,7 @@ app.layout = dbc.Container(
                     options={"Regular_s": "Regular", "Normalized_s": "Normalized"},
                     value='Regular_s'
                 ),
-                dcc.Loading(dcc.Graph(id="state_graph"), type="cube")],
+                dcc.Graph(id="state_graph")],
                 width = 6
             ),
             dbc.Col([
@@ -387,7 +387,7 @@ app.layout = dbc.Container(
                     options={"Regular_c": "Regular", "Normalized_c": "Normalized"},
                     value='Regular_c'
                 ),
-                dcc.Loading(dcc.Graph(id="county_graph"), type="cube")],
+                dcc.Graph(id="county_graph")],
                 width = 6
             ),
             dbc.Col([
@@ -400,6 +400,7 @@ app.layout = dbc.Container(
                     marks={str(year): str(year) for year in df1['year'].unique()},
                     id='year-slider'
                 ),
+                #html.Button("Play", id="play"),
                 ])
         ]
         )
@@ -422,8 +423,9 @@ app.layout = dbc.Container(
     Output('NeonicState', 'figure'),
 
     # For reset button
-    Output("reset", "disabled"),
-    
+    Output("reset", "disabled"),   
+
+    #Output("animate", "disabled"),
 
     Input("animate", "n_intervals"),
     Input("animate2", "n_intervals"),
@@ -440,14 +442,33 @@ app.layout = dbc.Container(
     # For reset button
     Input("reset", "n_clicks"),
     State("reset", "disabled"),
+
+    #Input("play", "n_clicks"),
+    #State("animate", "disabled"),
 )
-def update_figure(n, n2, year, selection1, selection2, value, n3, playing):
+def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4, playing2):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
+    print("ctx.triggered_id", ctx.triggered_id)
+    #print("n4", n4)
+    #print("n2", n2)
+    #print("n3", n3)
+    #print("n", n)
+    
+    # if (ctx.triggered_id == "play" or ctx.triggered_id == "animate"):
+    #     print("ANIMATE")
+    #     if n == None:
+    #         n = 0
 
-    button_id = ctx.triggered_id if not None else 'No clicks yet'
-    print("THE ID IS ", button_id)
+    #     CurYear = 1994+(n%((df1.year.max()+1)-1994))
+    #     print("Current year is", CurYear)
+    #     Ndf= df1[df1.year == CurYear]
+    #     year = CurYear
+    #     n_clicks = n
+    # else:
+    #     Ndf= df1[df1.year == year]
+    #     n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
     Ndf= df1[df1.year == year]
     n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
@@ -468,7 +489,7 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing):
     Ndf4 = bee_county_neonic_df[bee_county_neonic_df['Year'].isin([year2])]
     Ndf4_norm = bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([year2])]
 
-    Ndf5 = df3[df3['Year'] == year]
+    #Ndf5 = df3[df3['Year'] == year]
 
     if (n3 != None and n3 % 2 != 0):
         Ndf = df1
@@ -496,10 +517,10 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing):
                         title= title_text,
                         animation_frame='year') #make sure 'period_begin' is string type and sorted in
     
-    # fig.update_layout(transition = {'duration': 9000})
+    #fig.update_layout(transition = {'duration': 9000})
     # #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
-    # fig.update_layout(transition_duration=500)
+    #fig.update_layout(transition_duration=500)
 
     ######################################################################
 
@@ -636,6 +657,8 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing):
         df3.rename({'All_Crops':'All Crops'},axis=1, inplace=True)
         rColor = max_Values_Neonic[10]
     
+    Ndf5 = df3[df3['Year'] == year]
+    
     fig5 = px.choropleth(Ndf5,
                     locations='State', 
                     locationmode="USA-states", 
@@ -647,8 +670,11 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing):
                     animation_frame='Year') #make sure 'period_begin' is string type and sorted in ascending order
     fig5.update_layout(transition = {'duration': 9000})
 
+    # if (n != None and n >= 23):
+    #     print("n is", n)
+    #     playing2 = not playing2
 
-    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing
+    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing, #playing2
     #return fig, fig2, n_clicks, n_clicks2, year
 
 # Bar chart button callbacks
