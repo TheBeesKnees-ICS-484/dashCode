@@ -331,6 +331,7 @@ app.layout = dbc.Container(
             ]
         ),
         dbc.Row(
+            dbc.Col(
             [
             dcc.Graph(id='NeonicState'),
             dcc.Dropdown(
@@ -352,7 +353,7 @@ app.layout = dbc.Container(
                 clearable=False,
                 id='NStateDrop'
             )  
-        ]),
+        ])),
         dbc.Row(
             [
             dbc.Col([

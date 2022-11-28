@@ -143,6 +143,15 @@ fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='valu
 #fig2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
 
+df3 = pd.read_csv("Plotly Tests/neonic State/data/Lowest.csv")
+count = 0
+for i in df3.State:
+    for j in abbrev_to_us_state:
+        if abbrev_to_us_state[j].lower()==i.lower():
+            df3.loc[count,"State"] = j
+    count=count+1
+df3=df3.sort_values("Year")
+max_Values_Neonic = [260376.4,87192.27355,23148.2,51351.3,137070.6,6937.4,100550,248.6,10.40597214,14349.7,269365.3366]
 #############################
 
 ############ Bar Chart Summary ##########
@@ -304,7 +313,7 @@ app.layout = dbc.Container(
                     width=6,
                 ),
                 dbc.Col(
-                    dcc.Graph(figure=WTI_fig),
+                    dcc.Loading(dcc.Graph(figure=WTI_fig)),
                     width=6,
                 ),
             ]
@@ -313,17 +322,40 @@ app.layout = dbc.Container(
             [
                 dbc.Col([
                     dcc.Interval(id="animate", disabled=True),
-                    dcc.Graph(id="graph-with-slider")],#dcc.Graph(figure=fig1,),
+                    dcc.Loading(dcc.Graph(id="graph-with-slider"))],#dcc.Graph(figure=fig1,),
                     width = 6
             ),
                 dbc.Col([
                     dcc.Interval(id="animate2", disabled=True),
-                    dcc.Graph(id="graph-with-slider2")],#dcc.Graph(figure=fig2,),
+                    dcc.Loading(dcc.Graph(id="graph-with-slider2"))],#dcc.Graph(figure=fig2,),
                     width = 6
                 ),
             ]
         ),
-
+        dbc.Row(
+            dbc.Col(
+            [
+            dcc.Loading(dcc.Graph(id='NeonicState'), type="cube"),
+            dcc.Dropdown(
+                style={'color': 'black'},
+                options=[
+                    {'label': 'Corn',  'value':'Corn'},
+                    {'label': 'Soybeans',  'value':'Soybeans'},
+                    {'label': 'Wheat',  'value':'Wheat'},
+                    {'label': 'Cotton',  'value':'Cotton'},
+                    {'label': 'Vegetables & fruit',  'value':'Vegetables_and_fruit'},
+                    {'label': 'Rice',  'value':'Rice'},
+                    {'label': 'Orchards & grapes',  'value':'Orchards_and_grapes'},
+                    {'label': 'Alfalfa',  'value':'Alfalfa'},
+                    {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
+                    {'label': 'Other Crops',  'value':'Other_crops'},
+                    {'label': 'All Crops',  'value':'All_Crops'}, 
+                ],
+                value='All_Crops',
+                clearable=False,
+                id='NStateDrop'
+            )  
+        ])),
         dbc.Row(
             [
             dbc.Col([
@@ -373,6 +405,8 @@ app.layout = dbc.Container(
 
     Output("year-slider", "value"),
 
+    Output('NeonicState', 'figure'),
+
     Input("animate", "n_intervals"),
     Input("animate2", "n_intervals"),
 
@@ -380,9 +414,12 @@ app.layout = dbc.Container(
 
     # For switching between normalized and regular bar charts
     Input("selection_state", "value"),
-    Input("selection_county", "value")
+    Input("selection_county", "value"),
+
+    # For neonic data
+    Input('NStateDrop', 'value')
 )
-def update_figure(n, n2, year, selection1, selection2):
+def update_figure(n, n2, year, selection1, selection2, value):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
@@ -481,7 +518,7 @@ def update_figure(n, n2, year, selection1, selection2):
     # County bee data neonic fig
     fig4 = px.bar(bee_county_neonic_df[bee_county_neonic_df['Year'].isin([year2])],#[year2]], 
     x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+    title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2),
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
     fig4.update_layout(xaxis=dict(
@@ -497,7 +534,7 @@ def update_figure(n, n2, year, selection1, selection2):
     # County bee data neonic fig normalized
     fig4_normal = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([year2])],#[year2]], 
     x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+    title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2),
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
     bee_county_neonic_fig_normal.update_layout(xaxis=dict(
@@ -523,8 +560,54 @@ def update_figure(n, n2, year, selection1, selection2):
     else:
         animations['selection2'] = fig4_normal
 
+    ######################################################################
 
-    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year
+    if value == 'Corn':
+        rColor = max_Values_Neonic[0]
+    elif value == 'Soybeans':
+        rColor = max_Values_Neonic[1]
+    elif value == 'Wheat':
+        rColor = max_Values_Neonic[2]
+    elif value == 'Cotton':
+        rColor = max_Values_Neonic[3]
+    elif value == 'Vegetables_and_fruit':
+        value = 'Vegetables & fruit'
+        df3.rename({'Vegetables_and_fruit':'Vegetables & fruit'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[4]
+    elif value == 'Rice':
+        rColor = max_Values_Neonic[5]
+    elif value == 'Orchards_and_grapes':
+        value = 'Orchards & grapes'
+        df3.rename({'Orchards_and_grapes':'Orchards & grapes'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[6]
+    elif value == 'Alfalfa':
+        rColor = max_Values_Neonic[7]
+    elif value == 'Pasture_and_hay':
+        value = 'Pasture & Hay'
+        df3.rename({'Pasture_and_hay':'Pasture & Hay'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[8]
+    elif value == 'Other_crops':
+        value = 'Other Crops'
+        df3.rename({'Other_crops':'Other Crops'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[9]
+    elif value == 'All_Crops':
+        value = 'All Crops'
+        df3.rename({'All_Crops':'All Crops'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[10]
+    
+    fig5 = px.choropleth(df3[df3['Year'] == year],
+                    locations='State', 
+                    locationmode="USA-states", 
+                    color=value,
+                    color_continuous_scale="Viridis_r", 
+                    scope="usa",
+                    title = str(year) + ' Neonicotinoid use by State & Crop',
+                    range_color=(0,rColor),
+                    animation_frame='Year') #make sure 'period_begin' is string type and sorted in ascending order
+    fig5.update_layout(transition = {'duration': 9000})
+
+
+    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year, fig5
     #return fig, fig2, n_clicks, n_clicks2, year
 
 # @app.callback(
