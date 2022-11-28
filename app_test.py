@@ -187,7 +187,8 @@ title="Weighted Tolerance Index (WTI) compared with co-foraging species of bees"
 # Grouped bar charts
 # State bee data neonic fig
 bee_state_neonic_fig = px.bar(bee_state_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)")
+title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
 bee_state_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'linear',
@@ -202,7 +203,8 @@ bee_state_neonic_fig.update_layout(xaxis=dict(
 
 # State bee data neonic fig normalized
 bee_state_neonic_fig_normal = px.bar(bee_state_neonic_df_normal, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="State Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)")
+title="State Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
 bee_state_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'linear',
@@ -218,12 +220,13 @@ bee_state_neonic_fig_normal.update_layout(xaxis=dict(
 # County bee data neonic fig
 bee_county_neonic_fig = px.bar(bee_county_neonic_df[bee_county_neonic_df['Year'].isin([2002, 2007, 2012])], 
 x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)")
+title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
 bee_county_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'array',
         tickvals = [2002, 2007, 2012],
-        tickangle = 45,
+        tickangle = 90,
         # rangeslider=dict(
         # visible=True
         # )
@@ -233,12 +236,13 @@ bee_county_neonic_fig.update_layout(xaxis=dict(
 # County bee data neonic fig normalized
 bee_county_neonic_fig_normal = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([2002, 2007, 2012])], 
 x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)")
+title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
 bee_county_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'array',
         tickvals = [2002, 2007, 2012],
-        tickangle = 45,
+        tickangle = 90,
         # rangeslider=dict(
         # visible=True
         # )
