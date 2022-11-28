@@ -107,6 +107,17 @@ fig1 = px.choropleth(df1,
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
     counties = json.load(response)
 
+# NEW
+# df2 = pd.read_csv('bee_data/dataset_3/bee_colony_census_data_by_county.csv')
+# df2=df2.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
+# df2['value'] = df2['value'].replace("(D)", np.nan)
+
+# df2['value'] = df2['value'].str.replace(",", "") # For numbers with commas ex 1,000
+# df2['value'] = pd.to_numeric(df2['value'])
+
+# df2['value'] = df2['value'].replace(np.nan, df2['value'].mean())
+
+# OLD
 df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county_clean.csv")
 #df=df[['year','period','state','state_ansi', 'ag_district_code', 'county', 'county_ansi', 'value']]
 
