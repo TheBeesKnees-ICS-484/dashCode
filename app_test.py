@@ -178,7 +178,7 @@ title="Weighted Tolerance Index (WTI) compared with co-foraging species of bees"
 # Grouped bar charts
 # State bee data neonic fig
 bee_state_neonic_fig = px.bar(bee_state_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="State Level: Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)")
 
 bee_state_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'linear',
@@ -193,7 +193,7 @@ bee_state_neonic_fig.update_layout(xaxis=dict(
 
 # State bee data neonic fig normalized
 bee_state_neonic_fig_normal = px.bar(bee_state_neonic_df_normal, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="State Level: Normalized comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+title="State Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)")
 
 bee_state_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'linear',
@@ -209,7 +209,7 @@ bee_state_neonic_fig_normal.update_layout(xaxis=dict(
 # County bee data neonic fig
 bee_county_neonic_fig = px.bar(bee_county_neonic_df[bee_county_neonic_df['Year'].isin([2002, 2007, 2012])], 
 x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="County Level: Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)")
 
 bee_county_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'array',
@@ -224,7 +224,7 @@ bee_county_neonic_fig.update_layout(xaxis=dict(
 # County bee data neonic fig normalized
 bee_county_neonic_fig_normal = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([2002, 2007, 2012])], 
 x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="County Level: Normalized comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)")
 
 bee_county_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'array',
@@ -328,7 +328,7 @@ app.layout = dbc.Container(
                 dcc.RadioItems(
                     id='selection_state',
                     options={"Regular_s": "Regular", "Normalized_s": "Normalized"},
-                    value='Regular_s',
+                    value='Regular_s'
                 ),
                 dcc.Loading(dcc.Graph(id="state_graph"), type="cube")],
                 width = 6
@@ -337,7 +337,7 @@ app.layout = dbc.Container(
                 dcc.RadioItems(
                     id='selection_county',
                     options={"Regular_c": "Regular", "Normalized_c": "Normalized"},
-                    value='Regular_c',
+                    value='Regular_c'
                 ),
                 dcc.Loading(dcc.Graph(id="county_graph"), type="cube")],
                 width = 6
