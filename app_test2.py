@@ -335,12 +335,10 @@ app.layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col([
-                    dcc.Interval(id="animate", max_intervals=23, interval=3000, disabled=True),
                     dcc.Graph(id="graph-with-slider")],#dcc.Graph(figure=fig1,),
                     width = 6
             ),
                 dbc.Col([
-                    dcc.Interval(id="animate2", disabled=True),
                     dcc.Graph(id="graph-with-slider2")],#dcc.Graph(figure=fig2,),
                     width = 6
                 ),
@@ -392,6 +390,7 @@ app.layout = dbc.Container(
             ),
             dbc.Col([
                 html.Button("Reset", id="reset"),
+                dcc.Interval(id="animate", max_intervals=23, interval=3000, disabled=True),
                 dcc.Slider(
                     1994,
                     2017,
@@ -413,7 +412,7 @@ app.layout = dbc.Container(
     Output('graph-with-slider', 'figure'),
     Output('graph-with-slider2', 'figure'),
     Output("animate", "n_intervals"),
-    Output("animate2", "n_intervals"),
+    #Output("animate2", "n_intervals"),
 
     Output('state_graph', 'figure'),
     Output('county_graph', 'figure'),
@@ -428,7 +427,7 @@ app.layout = dbc.Container(
     Output("animate", "disabled"), ######
 
     Input("animate", "n_intervals"),
-    Input("animate2", "n_intervals"),
+    #Input("animate2", "n_intervals"),
 
     Input("year-slider", "value"),
 
@@ -446,15 +445,17 @@ app.layout = dbc.Container(
     Input("play", "n_clicks"), ######
     State("animate", "disabled"), #####
 )
-def update_figure(n, n2, year, selection1, selection2, value, n3, playing, n4, playing2):
+# n2 commented out
+def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playing2):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
     print("ctx.triggered_id", ctx.triggered_id)
-    #print("n4", n4)
+    print("n", n)
     #print("n2", n2)
-    #print("n3", n3)
-    #print("n", n)
+    print("n3", n3)
+    print("n4", n4)
+
     print("playing2 is", playing2)
     if (ctx.triggered_id == "play" or ctx.triggered_id == "animate"):
         playing2 = False
@@ -464,14 +465,15 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing, n4, p
 
         CurYear = 1994+((n)%((df1.year.max()+1)-1994))
         print("Current year is", CurYear)
-        Ndf= df1[df1.year == CurYear]
+        #Ndf= df1[df1.year == CurYear]
         year = CurYear
         n_clicks = n
     else:
-        Ndf= df1[df1.year == year]
-        n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
+        #Ndf= df1[df1.year == year]
+        n_clicks = n
+        #n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
-    #Ndf= df1[df1.year == year]
+    Ndf= df1[df1.year == year]
     #n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
     print("The year is", year)
@@ -696,11 +698,16 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing, n4, p
     fig5.update_layout(transition = {'duration': 9000})
 
     if (n != None and n >= 23):
-        print("n value is", n)
+        #print("n value is", n)
         print("playing2 again", playing2)
         playing2 = not playing2
 
-    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing, playing2
+        # reset n_clicks
+        n_clicks = 0
+
+    print("n_clicks is", n_clicks)
+    # second n_clicks commented out
+    return fig, fig2, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing, playing2
     #return fig, fig2, n_clicks, n_clicks2, year
 
 # Bar chart button callbacks
