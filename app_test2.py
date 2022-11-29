@@ -108,20 +108,20 @@ with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-c
     counties = json.load(response)
 
 # NEW
-# df2 = pd.read_csv('bee_data/dataset_3/bee_colony_census_data_by_county.csv')
-# df2['value'] = df2['value'].replace("(D)", np.nan)
+df2 = pd.read_csv('Plotly Tests/County Level map/data/bee_colony_census_data_by_county - D.csv')
+df2['value'] = df2['value'].replace("(D)", np.nan)
 
-# df2['value'] = df2['value'].str.replace(",", "") # For numbers with commas ex 1,000
-# df2['value'] = pd.to_numeric(df2['value'])
+df2['value'] = df2['value'].str.replace(",", "") # For numbers with commas ex 1,000
+df2['value'] = pd.to_numeric(df2['value'])
 
-# df2['value'] = df2['value'].replace(np.nan, df2['value'].mean())
+df2['value'] = df2['value'].replace(np.nan, df2['value'].mean())
 
-# df2 = df2[df2 != "(D)"]
-# df2 = df2.dropna(axis=0)
-# print(df2.state_ansi.unique())
+#df2 = df2[df2 != "(D)"]
+#df2 = df2.dropna(axis=0)
+print(df2.state_ansi.unique())
 
 # OLD
-df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county_clean.csv")
+# df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county_clean.csv")
 #df=df[['year','period','state','state_ansi', 'ag_district_code', 'county', 'county_ansi', 'value']]
 
 stateAnsi = []
@@ -335,7 +335,7 @@ app.layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col([
-                    dcc.Interval(id="animate", disabled=True),
+                    dcc.Interval(id="animate", max_intervals=23, interval=3000, disabled=True),
                     dcc.Graph(id="graph-with-slider")],#dcc.Graph(figure=fig1,),
                     width = 6
             ),
@@ -400,7 +400,7 @@ app.layout = dbc.Container(
                     marks={str(year): str(year) for year in df1['year'].unique()},
                     id='year-slider'
                 ),
-                #html.Button("Play", id="play"),
+                html.Button("Play", id="play"),
                 ])
         ]
         )
@@ -425,7 +425,7 @@ app.layout = dbc.Container(
     # For reset button
     Output("reset", "disabled"),   
 
-    #Output("animate", "disabled"),
+    Output("animate", "disabled"), ######
 
     Input("animate", "n_intervals"),
     Input("animate2", "n_intervals"),
@@ -443,10 +443,10 @@ app.layout = dbc.Container(
     Input("reset", "n_clicks"),
     State("reset", "disabled"),
 
-    #Input("play", "n_clicks"),
-    #State("animate", "disabled"),
+    Input("play", "n_clicks"), ######
+    State("animate", "disabled"), #####
 )
-def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4, playing2):
+def update_figure(n, n2, year, selection1, selection2, value, n3, playing, n4, playing2):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
@@ -455,23 +455,26 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
     #print("n2", n2)
     #print("n3", n3)
     #print("n", n)
-    
-    # if (ctx.triggered_id == "play" or ctx.triggered_id == "animate"):
-    #     print("ANIMATE")
-    #     if n == None:
-    #         n = 0
+    print("playing2 is", playing2)
+    if (ctx.triggered_id == "play" or ctx.triggered_id == "animate"):
+        playing2 = False
+        print("ANIMATE")
+        if n == None:
+            n = 0
 
-    #     CurYear = 1994+(n%((df1.year.max()+1)-1994))
-    #     print("Current year is", CurYear)
-    #     Ndf= df1[df1.year == CurYear]
-    #     year = CurYear
-    #     n_clicks = n
-    # else:
-    #     Ndf= df1[df1.year == year]
-    #     n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
+        CurYear = 1994+((n)%((df1.year.max()+1)-1994))
+        print("Current year is", CurYear)
+        Ndf= df1[df1.year == CurYear]
+        year = CurYear
+        n_clicks = n
+    else:
+        Ndf= df1[df1.year == year]
+        n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
-    Ndf= df1[df1.year == year]
-    n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
+    #Ndf= df1[df1.year == year]
+    #n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
+
+    print("The year is", year)
 
     Ndf2 = df2[df2.year == 2002]
     year2 = 2002
@@ -692,11 +695,12 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
                     animation_frame='Year') #make sure 'period_begin' is string type and sorted in ascending order
     fig5.update_layout(transition = {'duration': 9000})
 
-    # if (n != None and n >= 23):
-    #     print("n is", n)
-    #     playing2 = not playing2
+    if (n != None and n >= 23):
+        print("n value is", n)
+        print("playing2 again", playing2)
+        playing2 = not playing2
 
-    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing, #playing2
+    return fig, fig2, n_clicks, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing, playing2
     #return fig, fig2, n_clicks, n_clicks2, year
 
 # Bar chart button callbacks
