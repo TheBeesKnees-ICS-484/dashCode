@@ -34,9 +34,14 @@ neonic_df['Total Neonicotinoid Amount'] = neonic_df[crops].sum(axis=1)
 neonic_df = neonic_df.filter(items=['Year', 'Total Neonicotinoid Amount'])
 
 # Drop rows with (D) for county level bee map
-bee_county_df = bee_county_df[bee_county_df['value'] != "(D)"]
-bee_county_df['value'] = bee_county_df['value'].str.replace(",", "")
+#bee_county_df = bee_county_df[bee_county_df['value'] != "(D)"]
+
+bee_county_df['value'] = bee_county_df['value'].replace("(D)", np.nan)
+
+bee_county_df['value'] = bee_county_df['value'].str.replace(",", "") # For numbers with commas ex 1,000
 bee_county_df['value'] = pd.to_numeric(bee_county_df['value'])
+
+bee_county_df['value'] = bee_county_df['value'].replace(np.nan, bee_county_df['value'].mean())
 
 # Restrict to time period 1992-2017
 
@@ -50,7 +55,7 @@ neonic_df = neonic_df.loc[(1994 <= neonic_df['Year']) & (neonic_df['Year'] <= 20
 
 
 # Sum up values and group by year
-print(bee_state_df[bee_state_df['year'] == 2015].sum())
+# print(bee_state_df[bee_state_df['year'] == 2015].sum()) # checking when values explode
 
 bee_state_df = bee_state_df.groupby(by='year', as_index=False).sum()
 bee_county_df = bee_county_df.groupby(by='year', as_index=False).sum()

@@ -143,6 +143,15 @@ fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='valu
 #fig2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
 
+df3 = pd.read_csv("Plotly Tests/neonic State/data/Lowest.csv")
+count = 0
+for i in df3.State:
+    for j in abbrev_to_us_state:
+        if abbrev_to_us_state[j].lower()==i.lower():
+            df3.loc[count,"State"] = j
+    count=count+1
+df3=df3.sort_values("Year")
+max_Values_Neonic = [260376.4,87192.27355,23148.2,51351.3,137070.6,6937.4,100550,248.6,10.40597214,14349.7,269365.3366]
 #############################
 
 ############ Bar Chart Summary ##########
@@ -187,7 +196,8 @@ title="Weighted Tolerance Index (WTI) compared with co-foraging species of bees"
 # Grouped bar charts
 # State bee data neonic fig
 bee_state_neonic_fig = px.bar(bee_state_neonic_df, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="State Level: Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
 bee_state_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'linear',
@@ -202,7 +212,8 @@ bee_state_neonic_fig.update_layout(xaxis=dict(
 
 # State bee data neonic fig normalized
 bee_state_neonic_fig_normal = px.bar(bee_state_neonic_df_normal, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="State Level: Normalized comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+title="State Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
 bee_state_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'linear',
@@ -218,12 +229,13 @@ bee_state_neonic_fig_normal.update_layout(xaxis=dict(
 # County bee data neonic fig
 bee_county_neonic_fig = px.bar(bee_county_neonic_df[bee_county_neonic_df['Year'].isin([2002, 2007, 2012])], 
 x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="County Level: Comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
 bee_county_neonic_fig.update_layout(xaxis=dict(
         tickmode = 'array',
         tickvals = [2002, 2007, 2012],
-        tickangle = 45,
+        tickangle = 90,
         # rangeslider=dict(
         # visible=True
         # )
@@ -233,12 +245,13 @@ bee_county_neonic_fig.update_layout(xaxis=dict(
 # County bee data neonic fig normalized
 bee_county_neonic_fig_normal = px.bar(bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([2002, 2007, 2012])], 
 x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-title="County Level: Normalized comparison of Neonicotinoid usage and Bee Populations Over Time (1994-2014)")
+title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations Over Time (1994-2017)",
+color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
 bee_county_neonic_fig_normal.update_layout(xaxis=dict(
         tickmode = 'array',
         tickvals = [2002, 2007, 2012],
-        tickangle = 45,
+        tickangle = 90,
         # rangeslider=dict(
         # visible=True
         # )
@@ -317,14 +330,37 @@ app.layout = dbc.Container(
                 ),
             ]
         ),
-
+        dbc.Row(
+            dbc.Col(
+            [
+            dcc.Graph(id='NeonicState'),
+            dcc.Dropdown(
+                style={'color': 'black'},
+                options=[
+                    {'label': 'Corn',  'value':'Corn'},
+                    {'label': 'Soybeans',  'value':'Soybeans'},
+                    {'label': 'Wheat',  'value':'Wheat'},
+                    {'label': 'Cotton',  'value':'Cotton'},
+                    {'label': 'Vegetables & fruit',  'value':'Vegetables_and_fruit'},
+                    {'label': 'Rice',  'value':'Rice'},
+                    {'label': 'Orchards & grapes',  'value':'Orchards_and_grapes'},
+                    {'label': 'Alfalfa',  'value':'Alfalfa'},
+                    {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
+                    {'label': 'Other Crops',  'value':'Other_crops'},
+                    {'label': 'All Crops',  'value':'All_Crops'}, 
+                ],
+                value='All_Crops',
+                clearable=False,
+                id='NStateDrop'
+            )  
+        ])),
         dbc.Row(
             [
             dbc.Col([
                 dcc.RadioItems(
                     id='selection_state',
                     options={"Regular_s": "Regular", "Normalized_s": "Normalized"},
-                    value='Regular_s',
+                    value='Regular_s'
                 ),
                 dcc.Loading(dcc.Graph(id="state_graph"), type="cube")],
                 width = 6
@@ -333,7 +369,7 @@ app.layout = dbc.Container(
                 dcc.RadioItems(
                     id='selection_county',
                     options={"Regular_c": "Regular", "Normalized_c": "Normalized"},
-                    value='Regular_c',
+                    value='Regular_c'
                 ),
                 dcc.Loading(dcc.Graph(id="county_graph"), type="cube")],
                 width = 6
@@ -343,6 +379,7 @@ app.layout = dbc.Container(
     ],
     fluid = True
 )
+
 
 # Bar chart button callbacks
 @app.callback(
@@ -363,6 +400,58 @@ def display_animated_graph(selection1, selection2):
     else:
         animations['selection2'] = bee_county_neonic_fig_normal
     return animations["selection1"], animations["selection2"]
+
+@app.callback(
+    Output('NeonicState', 'figure'),
+    Input('NStateDrop', 'value')
+)
+def update_output(value):
+    
+    if value == 'Corn':
+        rColor = max_Values_Neonic[0]
+    elif value == 'Soybeans':
+        rColor = max_Values_Neonic[1]
+    elif value == 'Wheat':
+        rColor = max_Values_Neonic[2]
+    elif value == 'Cotton':
+        rColor = max_Values_Neonic[3]
+    elif value == 'Vegetables_and_fruit':
+        value = 'Vegetables & fruit'
+        df3.rename({'Vegetables_and_fruit':'Vegetables & fruit'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[4]
+    elif value == 'Rice':
+        rColor = max_Values_Neonic[5]
+    elif value == 'Orchards_and_grapes':
+        value = 'Orchards & grapes'
+        df3.rename({'Orchards_and_grapes':'Orchards & grapes'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[6]
+    elif value == 'Alfalfa':
+        rColor = max_Values_Neonic[7]
+    elif value == 'Pasture_and_hay':
+        value = 'Pasture & Hay'
+        df3.rename({'Pasture_and_hay':'Pasture & Hay'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[8]
+    elif value == 'Other_crops':
+        value = 'Other Crops'
+        df3.rename({'Other_crops':'Other Crops'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[9]
+    elif value == 'All_Crops':
+        value = 'All Crops'
+        df3.rename({'All_Crops':'All Crops'},axis=1, inplace=True)
+        rColor = max_Values_Neonic[10]
+    
+    fig3 = px.choropleth(df3,
+                    locations='State', 
+                    locationmode="USA-states", 
+                    color=value,
+                    color_continuous_scale="Viridis_r", 
+                    scope="usa",
+                    title = 'Neonicotinoid use by State & Crop',
+                    range_color=(0,rColor),
+                    animation_frame='Year') #make sure 'period_begin' is string type and sorted in ascending order
+    fig3.update_layout(transition = {'duration': 9000})
+    #fig3.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    return(fig3)
 
 if __name__ == "__main__":
     app.run_server(debug=True)
