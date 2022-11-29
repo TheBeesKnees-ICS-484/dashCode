@@ -309,7 +309,7 @@ app.layout = dbc.Container(
                                 ),
                             html.A("the Bee Conservancy", href="#", className="alert-link"),
                         ],
-                        color="success",
+                        color="primary",
                     ),
                     width=6,
                 )
@@ -330,7 +330,7 @@ app.layout = dbc.Container(
                                 "The weighted tolerance index (WTI) represents the relative degree of tolerance to the side effects of neonicotinoid intoxication for 10 different species of bees. A higher WTI value indicates a greater tolerance.",
                             ),
                         ],
-                        color="success",
+                        color="primary",
                     ),
                     width=6,
                 ),
