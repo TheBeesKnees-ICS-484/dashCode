@@ -491,7 +491,18 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
 
     #Ndf5 = df3[df3['Year'] == year]
 
-    if (n3 != None and n3 % 2 != 0):
+    title_fig1 = str(year)+' Bee data by State'
+    title_fig2 = str(year2)+' Bee data by County'
+
+    title_fig3="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year)
+    title_fig3norm = "State Level: Normalized Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year)
+
+    title_fig4 = "County Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2) 
+    title_fig4norm = "County Level: Normalized Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2)
+
+    title_fig5 = str(year) + ' Neonicotinoid use by State & Crop'
+
+    if ((n3 != None and n3 % 2 != 0) or ctx.triggered_id == None):
         Ndf = df1
         Ndf2 = df2
         Ndf3 = bee_state_neonic_df
@@ -500,12 +511,25 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
         Ndf4_norm = bee_county_neonic_df_normal
         Ndf5 = df3
 
+        title_fig1 = ' Bee data by State (1994-2017)'
+
+        title_fig2 = ' Bee data by County (1994-2017)'
+
+        title_fig3 = "State Level: Comparison of Neonicotinoid usage<br>and Bee Populations (1994-2017)"
+        title_fig3norm =  "State Level: Normalized Comparison of Neonicotinoid usage<br>and Bee Populations (1994-2017)"
+
+        title_fig4 = "County Level: Comparison of Neonicotinoid usage<br>and Bee Populations (1994-2017)"
+        title_fig4norm = "County Level: Normalized Comparison of Neonicotinoid usage<br>and Bee Populations (1994-2017)"
+
+        title_fig5 = 'Neonicotinoid use by State & Crop (1994-2017)'
+
+        # Want slider to move back to the beginning
+        year = 1994
+
 
     #n_clicks2 = abs(((df2.year.max())-year)-((df2.year.max())-df2.year.min()))
 
    ######################################################################
-
-    title_text = str(year)+' Bee data by State'
 
     fig = px.choropleth(Ndf,
                         locations='state', 
@@ -514,7 +538,7 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
                         color_continuous_scale="Viridis_r", 
                         scope="usa",
                         range_color=(0,169000),
-                        title= title_text,
+                        title= title_fig1,
                         animation_frame='year') #make sure 'period_begin' is string type and sorted in
     
     #fig.update_layout(transition = {'duration': 9000})
@@ -524,8 +548,6 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
 
     ######################################################################
 
-    title_text2 = str(year2)+' Bee data by County'
-
     fig2 = px.choropleth(Ndf2, geojson=counties, locations='county_ansi', color='value',
                            color_continuous_scale="Viridis_r",
                            #mapbox_style="carto-positron",
@@ -533,7 +555,7 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
                            scope="usa",
                            #zoom=3, center = {"lat": 37.0902, "lon": -95.7129},
                            #opacity=0.5,
-                           title = title_text2,
+                           title = title_fig2,
                            labels={'value':'Bee Population'},
                            animation_frame='year')
     
@@ -546,7 +568,7 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
 
     # State bee data neonic fig
     fig3 = px.bar(Ndf3, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year),
+    title=title_fig3,
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
     fig3.update_layout(xaxis=dict(
@@ -561,7 +583,7 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
     )
 
     fig3_normal = px.bar(Ndf3_norm, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year),
+    title=title_fig3norm,
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
     fig3_normal.update_layout(xaxis=dict(
@@ -580,7 +602,7 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
     # County bee data neonic fig
     fig4 = px.bar(Ndf4,#[year2]], 
     x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title="County Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2),
+    title=title_fig4,
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
     fig4.update_layout(xaxis=dict(
@@ -596,7 +618,7 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
     # County bee data neonic fig normalized
     fig4_normal = px.bar(Ndf4_norm,#[year2]], 
     x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title="County Level: Normalized comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2),
+    title=title_fig4norm,
     color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
     bee_county_neonic_fig_normal.update_layout(xaxis=dict(
@@ -665,7 +687,7 @@ def update_figure(n, n2, year, selection1, selection2, value, n3, playing): #n4,
                     color=value,
                     color_continuous_scale="Viridis_r", 
                     scope="usa",
-                    title = str(year) + ' Neonicotinoid use by State & Crop',
+                    title = title_fig5,
                     range_color=(0,rColor),
                     animation_frame='Year') #make sure 'period_begin' is string type and sorted in ascending order
     fig5.update_layout(transition = {'duration': 9000})
