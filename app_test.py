@@ -305,18 +305,32 @@ app.layout = dbc.Container(
                     width=6,
                 )
             ],
+            align="center",
         ),
         dbc.Row(
             [
                 dbc.Col(
-
+                     dbc.Alert(
+                        [
+                            html.H4("Weighted Tolerance Index", className="alert-heading", style={"text-decoration": "underline"},),
+                            html.P(
+                                "Neonicotinoids are toxic to bees, but they also cause a variety of detrimental side effects at sublethal levels depending on the species. These negative effects include problems with flight and navigation, reduced taste sensitivity, altered metabolism, slower learning ability (affects foraging), reduced olfactory response, and hindered reproduction.",
+                            ),
+                            html.Br(),
+                            html.P(
+                                "The weighted tolerance index (WTI) represents the relative degree of tolerance to the side effects of neonicotinoid intoxication for 10 different species of bees. A higher WTI value indicates a greater tolerance.",
+                            ),
+                        ],
+                        color="success",
+                    ),
                     width=6,
                 ),
                 dbc.Col(
                     dcc.Graph(figure=WTI_fig),
                     width=6,
                 ),
-            ]
+            ],
+            align="center",
         ),
         dbc.Row(
             [
