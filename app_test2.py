@@ -401,7 +401,7 @@ app.layout = dbc.Container(
                 ),
                 html.Button("Play", id="play"),
                 ])
-        ]
+            ]
         )
     ],
     fluid = True
