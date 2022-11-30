@@ -16,6 +16,11 @@ import base64
 
 app = dash.Dash(external_stylesheets=[dbc.themes.SUPERHERO])
 
+map_padding = "24px"
+map1_size = 800
+map2_size = 800
+map3_size = 800
+
 
 ############# Maps ################
 
@@ -102,7 +107,9 @@ fig1 = px.choropleth(df1,
                     color_continuous_scale="Viridis_r", 
                     scope="usa",
                     range_color=(0,169000),
-                    animation_frame='year') #make sure 'period_begin' is string type and sorted in
+                    animation_frame='year',
+                    height = map1_size
+                    ) #make sure 'period_begin' is string type and sorted in
 
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
     counties = json.load(response)
@@ -148,8 +155,10 @@ fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='valu
                            #opacity=0.5,
                            title = title_text2,
                            labels={'value':'Bee Population'},
-                          animation_frame='year')
-#fig2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+                          animation_frame='year',
+                          height = map2_size
+                          )
+#fig2.update_layout(margin={"r":80,"t":80,"l":80,"b":80})
 
 
 df3 = pd.read_csv("Plotly Tests/neonic State/data/Lowest.csv")
@@ -338,7 +347,7 @@ app.layout = dbc.Container(
                     dcc.Graph(figure=WTI_fig),
                     width=6,
                 ),
-            ],
+            ],style={"padding-bottom": map_padding},
             align="center",
         ),
         dbc.Row(
@@ -351,7 +360,7 @@ app.layout = dbc.Container(
                     dcc.Graph(id="graph-with-slider2"),#dcc.Graph(figure=fig2,),
                     width = 6
                 ),
-            ]
+            ],style={"padding-bottom": map_padding},
         ),
         dbc.Row(
             dbc.Col(
@@ -553,7 +562,17 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
                         scope="usa",
                         range_color=(0,169000),
                         title= title_fig1,
-                        animation_frame='year') #make sure 'period_begin' is string type and sorted in
+                        animation_frame='year',
+                        height = map1_size
+                        ) #make sure 'period_begin' is string type and sorted in
+
+    fig.update_layout({
+        'plot_bgcolor': 'rgba(0,0,0,0)',
+        'paper_bgcolor': 'rgba(35,87,137,20%)'
+    },
+    font_color="Gold",
+    geo=dict(bgcolor= 'rgba(0,0,0,0)')
+    )
     
     #fig.update_layout(transition = {'duration': 9000})
     # #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
@@ -571,8 +590,17 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
                            #opacity=0.5,
                            title = title_fig2,
                            labels={'value':'Bee Population'},
-                           animation_frame='year')
-    
+                           animation_frame='year',
+                           height = map2_size,
+                           )
+
+    fig2.update_layout({
+        'plot_bgcolor': 'rgba(0,0,0,0)',
+        'paper_bgcolor': 'rgba(0,0,0,20%)'
+    },
+    font_color="white",
+    geo=dict(bgcolor= 'rgba(0,0,0,0)')
+    )
     #fig2.update_layout(transition = {'duration': 9000})
     #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
@@ -703,8 +731,17 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
                     scope="usa",
                     title = title_fig5,
                     range_color=(0,rColor),
-                    animation_frame='Year') #make sure 'period_begin' is string type and sorted in ascending order
+                    animation_frame='Year',
+                    height = map3_size
+                    ) #make sure 'period_begin' is string type and sorted in ascending order
     fig5.update_layout(transition = {'duration': 9000})
+    fig5.update_layout({
+        'plot_bgcolor': 'rgba(0,0,0,0)',
+        'paper_bgcolor': 'rgba(35,87,137,20%)'
+    },
+    font_color="Gold",
+    geo=dict(bgcolor= 'rgba(35,87,137,20%)')
+    )
 
     if (n != None and n >= 23):
         #print("n value is", n)

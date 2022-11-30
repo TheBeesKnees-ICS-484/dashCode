@@ -148,7 +148,7 @@ def update_output(value):
         df.rename({'All_Crops':'All Crops'},axis=1, inplace=True)
         rColor = max_Values[10]
     
-    fig3 = px.choropleth(df3,
+    fig3 = px.choropleth(df,
                     locations='State', 
                     locationmode="USA-states", 
                     color=value,

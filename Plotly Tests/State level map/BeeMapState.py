@@ -89,7 +89,10 @@ fig = px.choropleth(df,
                     color_continuous_scale="Viridis_r", 
                     scope="usa",
                     range_color=(0,169000),
-                    animation_frame='year') #make sure 'period_begin' is string type and sorted in ascending order
+                    animation_frame='year',
+                    height = 800
+                    ) #make sure 'period_begin' is string type and sorted in ascending order
+                    
 
 fig.update_layout(transition = {'duration': 9000})
 fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
