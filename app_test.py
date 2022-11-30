@@ -408,7 +408,7 @@ app.layout = dbc.Container(
             ),
             dbc.Col([
                 html.Button("Reset", id="reset"),
-                dcc.Interval(id="animate", max_intervals=23, interval=3000, disabled=True),
+                dcc.Interval(id="animate", max_intervals=23, interval=2000, disabled=True),
                 dcc.Slider(
                     1994,
                     2017,
@@ -570,6 +570,7 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
         'plot_bgcolor': 'rgba(0,0,0,0)',
         'paper_bgcolor': 'rgba(35,87,137,20%)'
     },
+    transition = {'duration': 1000},
     font_color="Gold",
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
@@ -596,8 +597,9 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
 
     fig2.update_layout({
         'plot_bgcolor': 'rgba(0,0,0,0)',
-        'paper_bgcolor': 'rgba(0,0,0,20%)'
+        'paper_bgcolor': 'rgba(0,0,0,20%)',
     },
+    transition = {'duration': 1000},
     font_color="white",
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
@@ -609,69 +611,73 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
     ######################################################################
 
     # State bee data neonic fig
-    fig3 = px.bar(Ndf3, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title=title_fig3,
-    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
-    fig3.update_layout(xaxis=dict(
-            tickmode = 'linear',
-            tick0 = 1994,
-            dtick = 1,
-            tickangle = 90,
-            # rangeslider=dict(
-            # visible=True
-            # )
+    if (selection1 == "Regular_s"):
+        fig3 = px.bar(Ndf3, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+        title=title_fig3,
+        color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+
+        fig3.update_layout(xaxis=dict(
+                tickmode = 'linear',
+                tick0 = 1994,
+                dtick = 1,
+                tickangle = 90,
+                # rangeslider=dict(
+                # visible=True
+                # )
+            )
         )
-    )
+    else:
+        fig3_normal = px.bar(Ndf3_norm, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+        title=title_fig3norm,
+        color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
-    fig3_normal = px.bar(Ndf3_norm, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title=title_fig3norm,
-    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
-
-    fig3_normal.update_layout(xaxis=dict(
-            tickmode = 'linear',
-            tick0 = 1994,
-            dtick = 1,
-            tickangle = 90,
-            # rangeslider=dict(
-            # visible=True
-            # )
+        fig3_normal.update_layout(xaxis=dict(
+                tickmode = 'linear',
+                tick0 = 1994,
+                dtick = 1,
+                tickangle = 90,
+                # rangeslider=dict(
+                # visible=True
+                # )
+            )
         )
-    )
 
     ######################################################################
 
     # County bee data neonic fig
-    fig4 = px.bar(Ndf4,#[year2]], 
-    x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title=title_fig4,
-    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+    if (selection2 == "Regular_c"):
+        fig4 = px.bar(Ndf4,#[year2]], 
+        x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+        title=title_fig4,
+        color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
-    fig4.update_layout(xaxis=dict(
-            tickmode = 'array',
-            tickvals = [2002, 2007, 2012],
-            tickangle = 45,
-            # rangeslider=dict(
-            # visible=True
-            # )
-        )
-        )   
+        fig4.update_layout(xaxis=dict(
+                tickmode = 'array',
+                tickvals = [2002, 2007, 2012],
+                tickangle = 45,
+                # rangeslider=dict(
+                # visible=True
+                # )
+            )
+            )   
 
-    # County bee data neonic fig normalized
-    fig4_normal = px.bar(Ndf4_norm,#[year2]], 
-    x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-    title=title_fig4norm,
-    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+    else:
+        # County bee data neonic fig normalized
+        fig4_normal = px.bar(Ndf4_norm,#[year2]], 
+        x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+        title=title_fig4norm,
+        color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
-    bee_county_neonic_fig_normal.update_layout(xaxis=dict(
-            tickmode = 'array',
-            tickvals = [2002, 2007, 2012],
-            tickangle = 45,
-            # rangeslider=dict(
-            # visible=True
-            # )
-        )
-        )
+        fig4_normal.update_layout(xaxis=dict(
+                tickmode = 'array',
+                tickvals = [2002, 2007, 2012],
+                tickangle = 45,
+                # rangeslider=dict(
+                # visible=True
+                # )
+            )
+            )
 
     # Update to normal / regular bar chart
 
@@ -734,7 +740,7 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
                     animation_frame='Year',
                     height = map3_size
                     ) #make sure 'period_begin' is string type and sorted in ascending order
-    fig5.update_layout(transition = {'duration': 9000})
+    fig5.update_layout(transition = {'duration': 1000})
     fig5.update_layout({
         'plot_bgcolor': 'rgba(0,0,0,0)',
         'paper_bgcolor': 'rgba(35,87,137,20%)'
