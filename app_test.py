@@ -408,7 +408,7 @@ app.layout = dbc.Container(
             ),
             dbc.Col([
                 html.Button("Reset", id="reset"),
-                dcc.Interval(id="animate", max_intervals=23, interval=2000, disabled=True),
+                dcc.Interval(id="animate", max_intervals=23, interval=3000, disabled=True),
                 dcc.Slider(
                     1994,
                     2017,
@@ -465,6 +465,7 @@ app.layout = dbc.Container(
 )
 # n2 commented out
 def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playing2):
+    
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
