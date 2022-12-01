@@ -330,7 +330,7 @@ app.layout = dbc.Container(
                 dbc.Col(
                      dbc.Alert(
                         [
-                            html.H4("Weighted Tolerance Index", className="alert-heading", style={"text-decoration": "underline"},),
+                            html.H4("Resistance to Pesticide", className="alert-heading", style={"text-decoration": "underline"},),
                             html.P(
                                 "Neonicotinoids are toxic to bees, but they also cause a variety of detrimental side effects at sublethal levels depending on the species. These negative effects include problems with flight and navigation, reduced taste sensitivity, altered metabolism, slower learning ability (affects foraging), reduced olfactory response, and hindered reproduction.",
                             ),
