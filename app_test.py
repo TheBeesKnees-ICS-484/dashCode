@@ -316,9 +316,11 @@ app.layout = dbc.Container(
                     step=None,
                     value=1994,
                     marks={str(year): str(year) for year in df1['year'].unique()},
-                    id='year-slider'
+                    id='year-slider',
+                    disabled=False
                 ),
                 html.Button("Play", id="play"),
+                #html.Button(id="play"),
             ]),
         ),
         dbc.Row(
@@ -344,6 +346,10 @@ app.layout = dbc.Container(
 
     Output("animate", "disabled"), ######
 
+    Output("play", "children"), # Change title of button if play is paused
+
+    Output("year-slider", "disabled"), # Disable slider if playing animation
+
     Input("animate", "n_intervals"),
     #Input("animate2", "n_intervals"),
 
@@ -358,9 +364,11 @@ app.layout = dbc.Container(
 
     Input("play", "n_clicks"), ######
     State("animate", "disabled"), #####
+
+    Input("year-slider", "disabled")
 )
 # n2 commented out
-def update_figure(n, year, value, n3, playing, n4, playing2):
+def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
@@ -372,6 +380,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
 
     print("playing2 is", playing2)
     if (ctx.triggered_id == "play" or ctx.triggered_id == "animate"):
+        year_slider = True
         playing2 = False
         print("ANIMATE")
         if n == None:
@@ -384,6 +393,8 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
         n_clicks = n
     else:
         #Ndf= df1[df1.year == year]
+        playing2 = True
+        year_slider = False
         n_clicks = n
         #n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
@@ -392,13 +403,15 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
 
     print("The year is", year)
 
-
     Ndf5 = df3[df3['Year'] == year]
-    title_fig1 = 'Bee data by State in ' + str(year)
+    title_fig1 = 'Bee population by State in ' + str(year)
 
     title_fig5 = str(year) + ' Neonicotinoid use by State & Crop'
 
-    if ((n3 != None and n3 % 2 != 0) or ctx.triggered_id == None):
+    # Reset button was clicked or reached end of animation
+    if (ctx.triggered_id == "reset"):
+        # Stop animation
+        playing2 = True
         Ndf = df1
         # Ndf3 = bee_state_neonic_df
         # Ndf3_norm = bee_state_neonic_df_normal
@@ -406,12 +419,13 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
         # Ndf4_norm = bee_county_neonic_df_normal
         Ndf5 = df3
 
-        title_fig1 = 'Bee data by State (1994-2017)'
+        title_fig1 = 'Bee population by State (1994-2017)'
 
         title_fig5 = 'Neonicotinoid use by State & Crop (1994-2017)'
 
         # Want slider to move back to the beginning
         year = 1994
+        n_clicks = 0
 
     #n_clicks2 = abs(((df2.year.max())-year)-((df2.year.max())-df2.year.min()))
 
@@ -457,27 +471,27 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
         rColor = max_Values_Neonic[3]
     elif value == 'Vegetables_and_fruit':
         value = 'Vegetables & fruit'
-        Ndf5.rename({'Vegetables_and_fruit':'Vegetables & fruit'},axis=1, inplace=True)
+        Ndf5 = Ndf5.rename({'Vegetables_and_fruit':'Vegetables & fruit'},axis=1)
         rColor = max_Values_Neonic[4]
     elif value == 'Rice':
         rColor = max_Values_Neonic[5]
     elif value == 'Orchards_and_grapes':
         value = 'Orchards & grapes'
-        Ndf5.rename({'Orchards_and_grapes':'Orchards & grapes'},axis=1, inplace=True)
+        Ndf5 = Ndf5.rename({'Orchards_and_grapes':'Orchards & grapes'},axis=1)
         rColor = max_Values_Neonic[6]
     elif value == 'Alfalfa':
         rColor = max_Values_Neonic[7]
     elif value == 'Pasture_and_hay':
         value = 'Pasture & Hay'
-        Ndf5.rename({'Pasture_and_hay':'Pasture & Hay'},axis=1, inplace=True)
+        Ndf5 = Ndf5.rename({'Pasture_and_hay':'Pasture & Hay'},axis=1)
         rColor = max_Values_Neonic[8]
     elif value == 'Other_crops':
         value = 'Other Crops'
-        Ndf5.rename({'Other_crops':'Other Crops'},axis=1, inplace=True)
+        Ndf5 = Ndf5.rename({'Other_crops':'Other Crops'},axis=1)
         rColor = max_Values_Neonic[9]
     elif value == 'All_Crops':
         value = 'All Crops'
-        Ndf5.rename({'All_Crops':'All Crops'},axis=1, inplace=True)
+        Ndf5 = Ndf5.rename({'All_Crops':'All Crops'},axis=1)
         rColor = max_Values_Neonic[10]
     
     fig5 = px.choropleth(Ndf5,
@@ -500,17 +514,32 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
 
+    play_text = "Play"
+    # Stopping the slider at end
+    print("n before end is", n)
     if (n != None and n >= 23):
         #print("n value is", n)
         print("playing2 again", playing2)
-        playing2 = not playing2
+        play_text = "Restart"
+        playing2 = True
+    # if (year == 2017):
+    #     "STOP HERE"
+    #     playing2 = False
 
         # reset n_clicks
         n_clicks = 0
+    elif ((n4 != None) and (n4 % 2 != 0)):
+        play_text = "Pause"
+    # Stopping player when they pause
+    elif ((n4 != None) and (n4 % 2 == 0)):
+        playing2 = True
+        play_text = "Play"
+    
 
     print("n_clicks is", n_clicks)
+    print("playing2 at the end is", playing2)
     # second n_clicks commented out
-    return fig, n_clicks, year, fig5, playing, playing2
+    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider
 
 if __name__ == "__main__":
     app.run_server(debug=True)
