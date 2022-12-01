@@ -111,55 +111,6 @@ fig1 = px.choropleth(df1,
                     height = map1_size
                     ) #make sure 'period_begin' is string type and sorted in
 
-with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
-    counties = json.load(response)
-
-# Adding mean imputing
-df2 = pd.read_csv('Plotly Tests/County Level map/data/bee_colony_census_data_by_county - D.csv')
-df2['value'] = df2['value'].replace("(D)", np.nan)
-
-df2['value'] = df2['value'].str.replace(",", "") # For numbers with commas ex 1,000
-df2['value'] = pd.to_numeric(df2['value'])
-
-df2['value'] = df2['value'].replace(np.nan, df2['value'].mean())
-
-#df2 = pd.read_csv("Plotly Tests/County Level map/data/bee_colony_census_data_by_county_clean.csv")
-#df=df[['year','period','state','state_ansi', 'ag_district_code', 'county', 'county_ansi', 'value']]
-
-stateAnsi = []
-
-count_State = 0
-for i in df2.state_ansi:
-    df2.loc[count_State,"state_ansi"] = str(i).zfill(2)
-    stateAnsi.append(str(str(i).zfill(2)))
-    count_State=count_State+1
-
-count_County = 0
-for i in df2.county_ansi:
-    df2.loc[count_County,"county_ansi"] = str(stateAnsi[count_County])+str(i).zfill(3)
-    count_County=count_County+1
-
-#print(df.county_ansi)
-#print(counties)
-
-df2=df2.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
-
-title_text2 ='Bee data by County'
-
-fig2 = px.choropleth(df2, geojson=counties, locations='county_ansi', color='value',
-                           color_continuous_scale="Viridis_r",
-                           #mapbox_style="carto-positron",
-                           #range_color=(0, 129731),
-                           scope="usa",
-                           #zoom=3, center = {"lat": 37.0902, "lon": -95.7129},
-                           #opacity=0.5,
-                           title = title_text2,
-                           labels={'value':'Bee Population'},
-                          animation_frame='year',
-                          height = map2_size
-                          )
-#fig2.update_layout(margin={"r":80,"t":80,"l":80,"b":80})
-
 
 df3 = pd.read_csv("Plotly Tests/neonic State/data/Lowest.csv")
 count = 0
@@ -209,7 +160,7 @@ bee_county_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['To
 
 # Create graphs
 WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
-title="Weighted Tolerance Index (WTI) compared with co-foraging species of bees")
+title="Relative Resistance to Neonicotinoids by Bee Species")
 
 # Grouped bar charts
 # State bee data neonic fig
@@ -303,7 +254,7 @@ app.layout = dbc.Container(
                 dbc.Col(
                     dbc.Alert(
                         [
-                            html.H4("Pesticides and the Neonicotinoid Crisis", className="alert-heading", style={"text-decoration": "underline"},),
+                            html.H2("Pesticides and the Neonicotinoid Crisis", className="alert-heading", style={"text-decoration": "underline"},),
                             html.P(
                                 "Pesticides called neonicotinoids (neonics), which have been embraced in recent decades by many commercial farms across the U.S, have led to mass deaths of pollinators. It is one of the major factors that has put one in four of North America’s 4,000 bee species at risk of extinction."
                             ),
@@ -330,13 +281,13 @@ app.layout = dbc.Container(
                 dbc.Col(
                      dbc.Alert(
                         [
-                            html.H4("Weighted Tolerance Index", className="alert-heading", style={"text-decoration": "underline"},),
+                            html.H2("Relative Resistance", className="alert-heading", style={"text-decoration": "underline"},),
                             html.P(
                                 "Neonicotinoids are toxic to bees, but they also cause a variety of detrimental side effects at sublethal levels depending on the species. These negative effects include problems with flight and navigation, reduced taste sensitivity, altered metabolism, slower learning ability (affects foraging), reduced olfactory response, and hindered reproduction.",
                             ),
                             html.Br(),
                             html.P(
-                                "The weighted tolerance index (WTI) represents the relative degree of tolerance to the side effects of neonicotinoid intoxication for 10 different species of bees. A higher WTI value indicates a greater tolerance.",
+                                "Resistance is represented by the weighted tolerance index (WTI). WTI is the relative degree of tolerance to the side effects of neonicotinoid intoxication. A higher WTI value indicates a greater tolerance.",
                             ),
                         ],
                         color="primary",
@@ -357,35 +308,30 @@ app.layout = dbc.Container(
                     width = 6
             ),
                 dbc.Col(
-                    dcc.Graph(id="graph-with-slider2"),#dcc.Graph(figure=fig2,),
-                    width = 6
-                ),
+                [
+                dcc.Graph(id='NeonicState'),
+                dcc.Dropdown(
+                    style={'color': 'black'},
+                    options=[
+                        {'label': 'Corn',  'value':'Corn'},
+                        {'label': 'Soybeans',  'value':'Soybeans'},
+                        {'label': 'Wheat',  'value':'Wheat'},
+                        {'label': 'Cotton',  'value':'Cotton'},
+                        {'label': 'Vegetables & fruit',  'value':'Vegetables_and_fruit'},
+                        {'label': 'Rice',  'value':'Rice'},
+                        {'label': 'Orchards & grapes',  'value':'Orchards_and_grapes'},
+                        {'label': 'Alfalfa',  'value':'Alfalfa'},
+                        {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
+                        {'label': 'Other Crops',  'value':'Other_crops'},
+                        {'label': 'All Crops',  'value':'All_Crops'}, 
+                    ],
+                    value='All_Crops',
+                    clearable=False,
+                    id='NStateDrop'
+                )  
+            ]),
             ],style={"padding-bottom": map_padding},
         ),
-        dbc.Row(
-            dbc.Col(
-            [
-            dcc.Graph(id='NeonicState'),
-            dcc.Dropdown(
-                style={'color': 'black'},
-                options=[
-                    {'label': 'Corn',  'value':'Corn'},
-                    {'label': 'Soybeans',  'value':'Soybeans'},
-                    {'label': 'Wheat',  'value':'Wheat'},
-                    {'label': 'Cotton',  'value':'Cotton'},
-                    {'label': 'Vegetables & fruit',  'value':'Vegetables_and_fruit'},
-                    {'label': 'Rice',  'value':'Rice'},
-                    {'label': 'Orchards & grapes',  'value':'Orchards_and_grapes'},
-                    {'label': 'Alfalfa',  'value':'Alfalfa'},
-                    {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
-                    {'label': 'Other Crops',  'value':'Other_crops'},
-                    {'label': 'All Crops',  'value':'All_Crops'}, 
-                ],
-                value='All_Crops',
-                clearable=False,
-                id='NStateDrop'
-            )  
-        ])),
         dbc.Row(
             [
             dbc.Col([
@@ -428,7 +374,6 @@ app.layout = dbc.Container(
 # Unified slider callbacks
 @app.callback(
     Output('graph-with-slider', 'figure'),
-    Output('graph-with-slider2', 'figure'),
     Output("animate", "n_intervals"),
     #Output("animate2", "n_intervals"),
 
@@ -465,7 +410,6 @@ app.layout = dbc.Container(
 )
 # n2 commented out
 def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playing2):
-    
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
@@ -497,38 +441,19 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
 
     print("The year is", year)
 
-    Ndf2 = df2[df2.year == 2002]
-    year2 = 2002
-    if (year >= 2007 and year < 2012):
-        Ndf2= df2[df2.year == 2007]
-        year2 = 2007
-    elif (year >= 2012):
-        Ndf2= df2[df2.year == 2012]
-        year2 = 2012
-
 
     Ndf3 = bee_state_neonic_df[bee_state_neonic_df['Year'] == year]
     Ndf3_norm = bee_state_neonic_df_normal[bee_state_neonic_df_normal['Year'] == year]
 
-    Ndf4 = bee_county_neonic_df[bee_county_neonic_df['Year'].isin([year2])]
-    Ndf4_norm = bee_county_neonic_df_normal[bee_county_neonic_df_normal['Year'].isin([year2])]
-
     #Ndf5 = df3[df3['Year'] == year]
-
-    title_fig1 = str(year)+' Bee data by State'
-    title_fig2 = str(year2)+' Bee data by County'
 
     title_fig3="State Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year)
     title_fig3norm = "State Level: Normalized Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year)
-
-    title_fig4 = "County Level: Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2) 
-    title_fig4norm = "County Level: Normalized Comparison of Neonicotinoid usage<br>and Bee Populations in " + str(year2)
 
     title_fig5 = str(year) + ' Neonicotinoid use by State & Crop'
 
     if ((n3 != None and n3 % 2 != 0) or ctx.triggered_id == None):
         Ndf = df1
-        Ndf2 = df2
         Ndf3 = bee_state_neonic_df
         Ndf3_norm = bee_state_neonic_df_normal
         Ndf4 = bee_county_neonic_df
@@ -559,7 +484,7 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
                         locations='state', 
                         locationmode="USA-states", 
                         color='Bee Population',
-                        color_continuous_scale="Viridis_r", 
+                        color_continuous_scale="Viridis", 
                         scope="usa",
                         range_color=(0,169000),
                         title= title_fig1,
@@ -571,7 +496,6 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
         'plot_bgcolor': 'rgba(0,0,0,0)',
         'paper_bgcolor': 'rgba(35,87,137,20%)'
     },
-    transition = {'duration': 1000},
     font_color="Gold",
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
@@ -583,102 +507,70 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
 
     ######################################################################
 
-    fig2 = px.choropleth(Ndf2, geojson=counties, locations='county_ansi', color='value',
-                           color_continuous_scale="Viridis_r",
-                           #mapbox_style="carto-positron",
-                           #range_color=(0, 129731),
-                           scope="usa",
-                           #zoom=3, center = {"lat": 37.0902, "lon": -95.7129},
-                           #opacity=0.5,
-                           title = title_fig2,
-                           labels={'value':'Bee Population'},
-                           animation_frame='year',
-                           height = map2_size,
-                           )
-
-    fig2.update_layout({
-        'plot_bgcolor': 'rgba(0,0,0,0)',
-        'paper_bgcolor': 'rgba(0,0,0,20%)',
-    },
-    transition = {'duration': 1000},
-    font_color="white",
-    geo=dict(bgcolor= 'rgba(0,0,0,0)')
-    )
-    #fig2.update_layout(transition = {'duration': 9000})
-    #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-
-    #fig2.update_layout(transition_duration=500)
-
-    ######################################################################
-
     # State bee data neonic fig
+    fig3 = px.bar(Ndf3, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    title=title_fig3,
+    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
-    if (selection1 == "Regular_s"):
-        fig3 = px.bar(Ndf3, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-        title=title_fig3,
-        color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
-
-        fig3.update_layout(xaxis=dict(
-                tickmode = 'linear',
-                tick0 = 1994,
-                dtick = 1,
-                tickangle = 90,
-                # rangeslider=dict(
-                # visible=True
-                # )
-            )
+    fig3.update_layout(xaxis=dict(
+            tickmode = 'linear',
+            tick0 = 1994,
+            dtick = 1,
+            tickangle = 90,
+            # rangeslider=dict(
+            # visible=True
+            # )
         )
-    else:
-        fig3_normal = px.bar(Ndf3_norm, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-        title=title_fig3norm,
-        color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+    )
 
-        fig3_normal.update_layout(xaxis=dict(
-                tickmode = 'linear',
-                tick0 = 1994,
-                dtick = 1,
-                tickangle = 90,
-                # rangeslider=dict(
-                # visible=True
-                # )
-            )
+    fig3_normal = px.bar(Ndf3_norm, x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    title=title_fig3norm,
+    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+
+    fig3_normal.update_layout(xaxis=dict(
+            tickmode = 'linear',
+            tick0 = 1994,
+            dtick = 1,
+            tickangle = 90,
+            # rangeslider=dict(
+            # visible=True
+            # )
         )
+    )
 
     ######################################################################
 
     # County bee data neonic fig
-    if (selection2 == "Regular_c"):
-        fig4 = px.bar(Ndf4,#[year2]], 
-        x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-        title=title_fig4,
-        color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+    fig4 = px.bar(Ndf4,#[year2]], 
+    x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    title=title_fig4,
+    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
-        fig4.update_layout(xaxis=dict(
-                tickmode = 'array',
-                tickvals = [2002, 2007, 2012],
-                tickangle = 45,
-                # rangeslider=dict(
-                # visible=True
-                # )
-            )
-            )   
+    fig4.update_layout(xaxis=dict(
+            tickmode = 'array',
+            tickvals = [2002, 2007, 2012],
+            tickangle = 45,
+            # rangeslider=dict(
+            # visible=True
+            # )
+        )
+        )   
 
-    else:
-        # County bee data neonic fig normalized
-        fig4_normal = px.bar(Ndf4_norm,#[year2]], 
-        x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
-        title=title_fig4norm,
-        color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
+    # County bee data neonic fig normalized
+    fig4_normal = px.bar(Ndf4_norm,#[year2]], 
+    x="Year", y=['Total Neonicotinoid Amount', 'Bee Count'], barmode="group",
+    title=title_fig4norm,
+    color_discrete_sequence=['rgb(35, 87, 137)', 'rgb(241, 211, 2)'])
 
-        fig4_normal.update_layout(xaxis=dict(
-                tickmode = 'array',
-                tickvals = [2002, 2007, 2012],
-                tickangle = 45,
-                # rangeslider=dict(
-                # visible=True
-                # )
-            )
-            )
+    bee_county_neonic_fig_normal.update_layout(xaxis=dict(
+            tickmode = 'array',
+            tickvals = [2002, 2007, 2012],
+            tickangle = 45,
+            # rangeslider=dict(
+            # visible=True
+            # )
+        )
+        )
 
     # Update to normal / regular bar chart
 
@@ -734,20 +626,21 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
                     locations='State', 
                     locationmode="USA-states", 
                     color=value,
-                    color_continuous_scale="Viridis_r", 
+                    color_continuous_scale="Viridis", 
                     scope="usa",
                     title = title_fig5,
                     range_color=(0,rColor),
                     animation_frame='Year',
                     height = map3_size
                     ) #make sure 'period_begin' is string type and sorted in ascending order
-    fig5.update_layout(transition = {'duration': 1000})
+    fig5.update_layout(transition = {'duration': 9000})
+
     fig5.update_layout({
         'plot_bgcolor': 'rgba(0,0,0,0)',
         'paper_bgcolor': 'rgba(35,87,137,20%)'
     },
     font_color="Gold",
-    geo=dict(bgcolor= 'rgba(35,87,137,20%)')
+    geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
 
     if (n != None and n >= 23):
@@ -760,7 +653,7 @@ def update_figure(n, year, selection1, selection2, value, n3, playing, n4, playi
 
     print("n_clicks is", n_clicks)
     # second n_clicks commented out
-    return fig, fig2, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing, playing2
+    return fig, n_clicks, animations["selection1"], animations["selection2"], year, fig5, playing, playing2
 
 # ORIGINAL CALLBACKS
 
