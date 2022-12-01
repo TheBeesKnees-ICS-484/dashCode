@@ -209,7 +209,7 @@ bee_county_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['To
 
 # Create graphs
 WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
-title="Weighted Tolerance Index (WTI) compared with co-foraging species of bees")
+title="Relative Resistance to Neonicotinoids by Bee Species")
 
 # Grouped bar charts
 # State bee data neonic fig
@@ -303,7 +303,7 @@ app.layout = dbc.Container(
                 dbc.Col(
                     dbc.Alert(
                         [
-                            html.H4("Pesticides and the Neonicotinoid Crisis", className="alert-heading", style={"text-decoration": "underline"},),
+                            html.H2("Pesticides and the Neonicotinoid Crisis", className="alert-heading", style={"text-decoration": "underline"},),
                             html.P(
                                 "Pesticides called neonicotinoids (neonics), which have been embraced in recent decades by many commercial farms across the U.S, have led to mass deaths of pollinators. It is one of the major factors that has put one in four of North America’s 4,000 bee species at risk of extinction."
                             ),
@@ -330,13 +330,13 @@ app.layout = dbc.Container(
                 dbc.Col(
                      dbc.Alert(
                         [
-                            html.H4("Resistance to Pesticide", className="alert-heading", style={"text-decoration": "underline"},),
+                            html.H2("Relative Resistance", className="alert-heading", style={"text-decoration": "underline"},),
                             html.P(
                                 "Neonicotinoids are toxic to bees, but they also cause a variety of detrimental side effects at sublethal levels depending on the species. These negative effects include problems with flight and navigation, reduced taste sensitivity, altered metabolism, slower learning ability (affects foraging), reduced olfactory response, and hindered reproduction.",
                             ),
                             html.Br(),
                             html.P(
-                                "The weighted tolerance index (WTI) represents the relative degree of tolerance to the side effects of neonicotinoid intoxication for 10 different species of bees. A higher WTI value indicates a greater tolerance.",
+                                "Resistance is represented by the weighted tolerance index (WTI). WTI is the relative degree of tolerance to the side effects of neonicotinoid intoxication. A higher WTI value indicates a greater tolerance.",
                             ),
                         ],
                         color="primary",
