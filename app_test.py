@@ -102,6 +102,10 @@ for i in df1.state:
 df1.rename({'value':'Bee Population'},axis=1, inplace=True)
 df1=df1.sort_values("year") # Make sure you sort the time horizon column in ascending order because this column is in random order in the raw dataset
 
+# Adding in so dates for both neonic and bee data overlap
+df1 = df1[df1["year"] >= 1994]
+df1 = df1[df1["year"] <= 2017]
+
 fig1 = px.choropleth(df1,
                     locations='state', 
                     locationmode="USA-states", 
@@ -389,10 +393,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
     print("The year is", year)
 
 
-    Ndf3 = bee_state_neonic_df[bee_state_neonic_df['Year'] == year]
-    # Ndf3_norm = bee_state_neonic_df_normal[bee_state_neonic_df_normal['Year'] == year]
-
-    #Ndf5 = df3[df3['Year'] == year]
+    Ndf5 = df3[df3['Year'] == year]
     title_fig1 = 'Bee data by State in ' + str(year)
 
     title_fig5 = str(year) + ' Neonicotinoid use by State & Crop'
@@ -456,30 +457,28 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
         rColor = max_Values_Neonic[3]
     elif value == 'Vegetables_and_fruit':
         value = 'Vegetables & fruit'
-        df3.rename({'Vegetables_and_fruit':'Vegetables & fruit'},axis=1, inplace=True)
+        Ndf5.rename({'Vegetables_and_fruit':'Vegetables & fruit'},axis=1, inplace=True)
         rColor = max_Values_Neonic[4]
     elif value == 'Rice':
         rColor = max_Values_Neonic[5]
     elif value == 'Orchards_and_grapes':
         value = 'Orchards & grapes'
-        df3.rename({'Orchards_and_grapes':'Orchards & grapes'},axis=1, inplace=True)
+        Ndf5.rename({'Orchards_and_grapes':'Orchards & grapes'},axis=1, inplace=True)
         rColor = max_Values_Neonic[6]
     elif value == 'Alfalfa':
         rColor = max_Values_Neonic[7]
     elif value == 'Pasture_and_hay':
         value = 'Pasture & Hay'
-        df3.rename({'Pasture_and_hay':'Pasture & Hay'},axis=1, inplace=True)
+        Ndf5.rename({'Pasture_and_hay':'Pasture & Hay'},axis=1, inplace=True)
         rColor = max_Values_Neonic[8]
     elif value == 'Other_crops':
         value = 'Other Crops'
-        df3.rename({'Other_crops':'Other Crops'},axis=1, inplace=True)
+        Ndf5.rename({'Other_crops':'Other Crops'},axis=1, inplace=True)
         rColor = max_Values_Neonic[9]
     elif value == 'All_Crops':
         value = 'All Crops'
-        df3.rename({'All_Crops':'All Crops'},axis=1, inplace=True)
+        Ndf5.rename({'All_Crops':'All Crops'},axis=1, inplace=True)
         rColor = max_Values_Neonic[10]
-    
-    Ndf5 = df3[df3['Year'] == year]
     
     fig5 = px.choropleth(Ndf5,
                     locations='State', 
@@ -492,7 +491,6 @@ def update_figure(n, year, value, n3, playing, n4, playing2):
                     animation_frame='Year',
                     height = map3_size
                     ) #make sure 'period_begin' is string type and sorted in ascending order
-    fig5.update_layout(transition = {'duration': 9000})
 
     fig5.update_layout({
         'plot_bgcolor': 'rgba(0,0,0,0)',
