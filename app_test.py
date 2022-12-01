@@ -208,7 +208,7 @@ bee_county_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotin
 bee_county_neonic_df_normal['Total Neonicotinoid Amount'] = neonic_df_normal['Total Neonicotinoid Amount'].copy()
 
 # Create graphs
-WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
+WTI_fig = px.bar(WTI_df, x='genus', y='relative resistance', 
 title="Relative Resistance to Neonicotinoids by Bee Species")
 
 # Grouped bar charts
