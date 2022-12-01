@@ -19,15 +19,12 @@ import base64
 app = dash.Dash(external_stylesheets=[dbc.themes.SUPERHERO])
 
 map_padding = "24px"
-map1_size = 800
-map2_size = 800
-map3_size = 800
+map1_size = 400
+graph_size = 375
+map3_size = 400
 
 
 ############# Maps ################
-
-filepath = str(pathlib.Path(__file__).parent.resolve())
-
 df1 = pd.read_csv("Plotly Tests/State level map/data/bee_colony_survey_data_by_state.csv")
 df1=df1[['year','period','week_ending','state','state_ansi', 'watershed', 'data_item', 'value']]
 us_state_to_abbrev = {
@@ -283,28 +280,10 @@ app.layout = dbc.Container(
             ),
                 dbc.Col(
                 [
-                dcc.Graph(id='NeonicState'),
-                dcc.Dropdown(
-                    style={'color': 'black'},
-                    options=[
-                        {'label': 'Corn',  'value':'Corn'},
-                        {'label': 'Soybeans',  'value':'Soybeans'},
-                        {'label': 'Wheat',  'value':'Wheat'},
-                        {'label': 'Cotton',  'value':'Cotton'},
-                        {'label': 'Vegetables & fruit',  'value':'Vegetables_and_fruit'},
-                        {'label': 'Rice',  'value':'Rice'},
-                        {'label': 'Orchards & grapes',  'value':'Orchards_and_grapes'},
-                        {'label': 'Alfalfa',  'value':'Alfalfa'},
-                        {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
-                        {'label': 'Other Crops',  'value':'Other_crops'},
-                        {'label': 'All Crops',  'value':'All_Crops'}, 
-                    ],
-                    value='All_Crops',
-                    clearable=False,
-                    id='NStateDrop'
-                )  
-            ]),
-            ],style={"padding-bottom": map_padding},
+                    dcc.Graph(figure=bee_state_neonic_fig)],
+                    width = 6
+                ),
+                ],style={"padding-bottom": map_padding},
         ),
         dbc.Row(
             dbc.Col([
@@ -324,9 +303,33 @@ app.layout = dbc.Container(
             ]),
         ),
         dbc.Row(
-            dbc.Col(
-                dcc.Graph(figure=bee_state_neonic_fig)
-            )
+            [
+            dbc.Col([
+                dcc.Graph(id='NeonicState'), 
+            ],width = 6
+            ),
+            dbc.Col([
+                dcc.RadioItems(
+                    options=[
+                        {'label': 'Corn', 'value':'Corn'},
+                        {'label': 'Soybeans',  'value':'Soybeans'},
+                        {'label': 'Wheat',  'value':'Wheat'},
+                        {'label': 'Cotton',  'value':'Cotton'},
+                        {'label': 'Vegetables & fruit',  'value':'Vegetables_and_fruit'},
+                        {'label': 'Rice',  'value':'Rice'},
+                        {'label': 'Orchards & grapes',  'value':'Orchards_and_grapes'},
+                        {'label': 'Alfalfa',  'value':'Alfalfa'},
+                        {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
+                        {'label': 'Other Crops',  'value':'Other_crops'},
+                        {'label': 'All Crops',  'value':'All_Crops'}, 
+                    ],
+                    value='All_Crops',
+                    id='NStateDrop',
+                    labelStyle={'display': 'block'},
+                    style={'font-size': 40}
+                )  
+            ]),
+            ],style={"padding-bottom": map_padding},
         )
     ],
     fluid = True
@@ -408,8 +411,8 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
 
     title_fig5 = str(year) + ' Neonicotinoid use by State & Crop'
 
-    # Reset button was clicked or reached end of animation
-    if (ctx.triggered_id == "reset"):
+    # First loading page or reset button was clicked
+    if (ctx.triggered_id == "reset" or ctx.triggered_id == None):
         # Stop animation
         playing2 = True
         Ndf = df1
@@ -450,12 +453,6 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     font_color="Gold",
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
-    
-    #fig.update_layout(transition = {'duration': 9000})
-    # #fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-
-    #fig.update_layout(transition_duration=500)
-
     ######################################################################
 
 
