@@ -116,6 +116,7 @@ fig1 = px.choropleth(df1,
 
 
 df3 = pd.read_csv("Plotly Tests/neonic State/data/Lowest.csv")
+
 count = 0
 for i in df3.State:
     for j in abbrev_to_us_state:
@@ -136,11 +137,13 @@ WTI_df = pd.read_csv("preprocessed_bee_data/WTI_clean.csv")
 
 # Neonicotinoid usage data
 neonic_df = pd.read_csv("preprocessed_bee_data/neonic_summary_chart.csv")
+print("NEONIC COLS: ", neonic_df.columns)
 
 # Bee colony count data
 
 # State Level
 bee_state_df = pd.read_csv("preprocessed_bee_data/bee_colony_data/state_level/bee_state_summary_chart.csv")
+print("BEE STATE COLS: ", bee_state_df.columns)
 
 # Combined data (normalized)
 bee_state_neonic_df = bee_state_df.copy()
@@ -274,8 +277,15 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             [
-                dbc.Col(
+                dbc.Col([
                     dcc.Graph(id="graph-with-slider"),
+                    dbc.Card([
+                    dbc.CardHeader(html.H3(id="year-counter", style={"color": "red"})),
+                    dbc.CardBody([
+                        html.H4(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)"}),
+                        html.H4(id="neonic-use-counter", style={"color": "rgb(35, 87, 137)"})
+                    ], style={"background-color": "white"})
+                ])],
                     width = 6
             ),
                 dbc.Col(
@@ -288,7 +298,7 @@ app.layout = dbc.Container(
         dbc.Row(
             dbc.Col([
                 html.Button("Reset", id="reset"),
-                dcc.Interval(id="animate", max_intervals=23, interval=500, disabled=True),
+                dcc.Interval(id="animate", max_intervals=23, interval=1000, disabled=True),
                 dcc.Slider(
                     1994,
                     2017,
@@ -329,6 +339,15 @@ app.layout = dbc.Container(
                     style={'font-size': 40}
                 )  
             ]),
+            # dbc.Col([
+            #     dbc.Card([
+            #         dbc.CardHeader(html.H3(id="year-counter", style={"color": "red"})),
+            #         dbc.CardBody([
+            #             html.H4(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)"}),
+            #             html.H4(id="neonic-use-counter", style={"color": "rgb(35, 87, 137)"})
+            #         ], style={"background-color": "white"})
+            #     ])
+            # ])
             ],style={"padding-bottom": map_padding},
         )
     ],
@@ -352,6 +371,10 @@ app.layout = dbc.Container(
     Output("play", "children"), # Change title of button if play is paused
 
     Output("year-slider", "disabled"), # Disable slider if playing animation
+
+    Output("bee-loss-counter", "children"), #$$$$$$$$$$$
+    Output("neonic-use-counter", "children"), #$$$$$$$$$$$
+    Output("year-counter", "children"), #$$$$$$$$$$$
 
     Input("animate", "n_intervals"),
     #Input("animate2", "n_intervals"),
@@ -535,8 +558,23 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
 
     print("n_clicks is", n_clicks)
     print("playing2 at the end is", playing2)
-    # second n_clicks commented out
-    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider
+    
+    # FOR COUNTERS:
+    # calculate current bee pop
+    bee_data_year = bee_state_df[bee_state_df['Year'] == year]
+    bee_count = np.array(bee_data_year['Bee Count'])[0].astype('int64')
+    bee_count_str = "Bee Population: " + "{:,}".format(bee_count)
+
+    # calculate neonic usage
+    neonic_data_year = neonic_df[neonic_df['Year'] == year]
+    neonic_count = np.array(neonic_data_year['Total Neonicotinoid Amount'])[0].astype('int64')
+    neonic_count_str = "Neonicotinoid Usage: " + "{:,}".format(neonic_count)
+
+    # Get year count
+    year_count_str = str(year) + " Counts"
+
+
+    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_count_str, neonic_count_str, year_count_str
 
 if __name__ == "__main__":
     app.run_server(debug=True)
