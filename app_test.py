@@ -565,6 +565,14 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     bee_count = np.array(bee_data_year['Bee Count'])[0].astype('int64')
     bee_count_str = "Bee Population: " + "{:,}".format(bee_count)
 
+    # To get bee loss
+    bee_loss_count = 0
+    if (year > 1994):
+        bee_data_year_prior = bee_state_df[bee_state_df['Year'] == year - 1]
+        bee_count_prior = np.array(bee_data_year_prior['Bee Count'])[0].astype('int64')
+        bee_loss_count += bee_count_prior - bee_count
+
+
     # calculate neonic usage
     neonic_data_year = neonic_df[neonic_df['Year'] == year]
     neonic_count = np.array(neonic_data_year['Total Neonicotinoid Amount'])[0].astype('int64')
@@ -574,7 +582,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     year_count_str = str(year) + " Counts"
 
 
-    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_count_str, neonic_count_str, year_count_str
+    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_count, neonic_count_str, year_count_str
 
 if __name__ == "__main__":
     app.run_server(debug=True)
