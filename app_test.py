@@ -279,19 +279,26 @@ app.layout = dbc.Container(
             [
                 dbc.Col([
                     dcc.Graph(id="graph-with-slider"),
-                    dbc.Container([
-                        dbc.Row([
-                            #dbc.Col(html.H3(id="year-counter", style={"color": "red"}), align="center"),
-                            dbc.Col([html.H4("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
-                                    html.H4("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"})], 
-                                    style={"white-space": "pre"}, width=4.5),
-                            dbc.Col([html.H4(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
-                            html.H4(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})], width=3,
-                            #style={"background-color": "white"}
-                            ),
-                            dbc.Col(width=4.5)
-                        ], className="g-0")
-                    ], style={"margin-top": "20px"})              
+                    dbc.Fade(
+                        dbc.Container([
+                            dbc.Row([
+                                #dbc.Col(html.H3(id="year-counter", style={"color": "red"}), align="center"),
+                                dbc.Col([html.H4("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
+                                        html.H4("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"})], 
+                                        style={"white-space": "pre"}, width=4.5),
+                                dbc.Col([html.H4(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
+                                html.H4(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})], width=3,
+                                #style={"background-color": "white"}
+                                ),
+                                dbc.Col(width=4.5)
+                            ], className="g-0")
+                        ], style={"margin-top": "20px"}),
+                        id="counter-fade",
+                        is_in=False,
+                        appear=False,
+                        # style={"transition": "opacity 100ms ease"},
+                        # timeout=100,
+                    )            
                 ],
                     width = 6
             ),
@@ -383,6 +390,8 @@ app.layout = dbc.Container(
     Output("neonic-use-counter", "children"), #$$$$$$$$$$$
     #Output("year-counter", "children"), #$$$$$$$$$$$
 
+    Output("counter-fade", "is_in"),
+
     Input("animate", "n_intervals"),
     #Input("animate2", "n_intervals"),
 
@@ -412,6 +421,8 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     print("n4", n4)
 
     print("playing2 is", playing2)
+
+    show_counter = True
     if (ctx.triggered_id == "play" or ctx.triggered_id == "animate"):
         year_slider = True
         playing2 = False
@@ -443,6 +454,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
 
     # First loading page or reset button was clicked
     if (ctx.triggered_id == "reset" or ctx.triggered_id == None):
+        show_counter = False
         # Stop animation
         playing2 = True
         Ndf = df1
@@ -591,7 +603,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     # Get year count
     #year_count_str = str(year) + " Counts"
 
-    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str, #year_count_str
+    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str, show_counter#year_count_str
 
 if __name__ == "__main__":
     app.run_server(debug=True)
