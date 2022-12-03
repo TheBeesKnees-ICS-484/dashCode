@@ -152,7 +152,7 @@ bee_state_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotino
 
 # Create graphs
 WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
-title="Relative Resistance to Neonicotinoids by Bee Species")
+title="Relative Resistance to Neonicotinoids by Bee Species", labels={"genus":"Genus", "relative WTI": "Relative Resistance"})
 
 #########################################
 
@@ -185,7 +185,7 @@ bee_state_neonic_fig.add_trace(
 
 # Add figure title
 bee_state_neonic_fig.update_layout(
-    title_text="Comparing neonicotinoid usage and bee populations over time (1994-2017)"
+    title_text="Comparing Neonicotinoid Usage and Bee Population Over Time (1994-2017)"
 )
 
 # bee_state_neonic_fig.update_layout({
@@ -266,26 +266,26 @@ app.layout = dbc.Container(
                         ],
                         color="primary",
                     ),
-                    dbc.Fade(
-                        dbc.Container([
-                            dbc.Row([
-                                #dbc.Col(html.H3(id="year-counter", style={"color": "red"}), align="center"),
-                                dbc.Col([html.H4("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
-                                        html.H4("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"})], 
-                                        style={"white-space": "pre"}, width=4.5),
-                                dbc.Col([html.H4(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
-                                html.H4(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})], width=3,
-                                #style={"background-color": "rgb(19, 47, 71, 0.7)"}
-                                ),
-                                dbc.Col(width=4.5)
-                            ], className="g-0")
-                        ], style={"margin-top": "20px"}),
-                        id="counter-fade",
-                        is_in=False,
-                        appear=False,
-                        # style={"transition": "opacity 100ms ease"},
-                        # timeout=100,
-                    ),
+                    # dbc.Fade(
+                    #     dbc.Container([
+                    #         dbc.Row([
+                    #             dbc.Col(html.H1(id="year-counter", style={"color": "#FFF5EE"}), align="center"),
+                    #             dbc.Col([html.H3("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
+                    #                     html.H3("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"})], 
+                    #                     style={"white-space": "pre"}, width=4.5),
+                    #             dbc.Col([html.H3(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
+                    #             html.H3(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})], width=3,
+                    #             #style={"background-color": "rgb(19, 47, 71, 0.7)"}
+                    #             ),
+                    #             dbc.Col(width=4.5)
+                    #         ], className="g-0")
+                    #     ], style={"margin-top": "20px"}),
+                    #     id="counter-fade",
+                    #     is_in=False,
+                    #     appear=False,
+                    #     # style={"transition": "opacity 100ms ease"},
+                    #     # timeout=100,
+                    # ),
                     #width=6,
             ]),
                 dbc.Col(
@@ -299,9 +299,31 @@ app.layout = dbc.Container(
             [
                 dbc.Col([
                     dcc.Graph(id="graph-with-slider"),            
+                
+                                    dbc.Fade(
+                        dbc.Container([
+                            dbc.Row([
+                                dbc.Col(html.H1(id="year-counter", style={"color": "#FFF5EE"}), align="center"),
+                                dbc.Col([html.H3("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
+                                        html.H3("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"})], 
+                                        style={"white-space": "pre"}, width=4.5),
+                                dbc.Col([html.H3(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
+                                html.H3(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})], width=3,
+                                #style={"background-color": "rgb(19, 47, 71, 0.7)"}
+                                ),
+                                dbc.Col(width=4.5)
+                            ], className="g-0")
+                        ], style={"margin-top": "20px"}),
+                        id="counter-fade",
+                        is_in=False,
+                        appear=False,
+                        # style={"transition": "opacity 100ms ease"},
+                        # timeout=100,
+                    ),
                 ],
                     width = 6
             ),
+            
                 dbc.Col(
                 [
                     dcc.Graph(id='NeonicState'),
@@ -397,7 +419,7 @@ app.layout = dbc.Container(
 
     Output("bee-loss-counter", "children"), #$$$$$$$$$$$
     Output("neonic-use-counter", "children"), #$$$$$$$$$$$
-    #Output("year-counter", "children"), #$$$$$$$$$$$
+    Output("year-counter", "children"), #$$$$$$$$$$$
 
     Output("counter-fade", "is_in"),
 
@@ -457,9 +479,9 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     print("The year is", year)
 
     Ndf5 = df3[df3['Year'] == year]
-    title_fig1 = 'Bee population by State in ' + str(year)
+    title_fig1 = 'Bee Population by State in ' + str(year)
 
-    title_fig5 = str(year) + ' Neonicotinoid use by State & Crop'
+    title_fig5 = 'Neonicotinoid Usage by State & Crop in ' +  str(year)
 
     # First loading page or reset button was clicked
     if (ctx.triggered_id == "reset" or ctx.triggered_id == None):
@@ -473,9 +495,9 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         # Ndf4_norm = bee_county_neonic_df_normal
         Ndf5 = df3
 
-        title_fig1 = 'Bee population by State (1994-2017)'
+        title_fig1 = 'Bee Population by State (1994-2017)'
 
-        title_fig5 = 'Neonicotinoid use by State & Crop (1994-2017)'
+        title_fig5 = 'Neonicotinoid Usage by State & Crop (1994-2017)'
 
         # Want slider to move back to the beginning
         year = 1994
@@ -493,7 +515,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
                         scope="usa",
                         range_color=(0,169000),
                         title= title_fig1,
-                        animation_frame='year',
+                        #animation_frame='year',
                         height = map1_size
                         ) #make sure 'period_begin' is string type and sorted in
 
@@ -550,7 +572,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
                     scope="usa",
                     title = title_fig5,
                     range_color=(0,rColor),
-                    animation_frame='Year',
+                    #animation_frame='Year',
                     height = map3_size
                     ) #make sure 'period_begin' is string type and sorted in ascending order
 
@@ -610,9 +632,9 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     neonic_count_str = "{:,}".format(neonic_count)
 
     # Get year count
-    #year_count_str = str(year) + " Counts"
+    year_count_str = str(year) + " Counts"
 
-    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str, show_counter#year_count_str
+    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str,  year_count_str, show_counter
 
 if __name__ == "__main__":
     app.run_server(debug=True)
