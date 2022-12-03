@@ -279,13 +279,20 @@ app.layout = dbc.Container(
             [
                 dbc.Col([
                     dcc.Graph(id="graph-with-slider"),
-                    dbc.Card([
-                    dbc.CardHeader(html.H3(id="year-counter", style={"color": "red"})),
-                    dbc.CardBody([
-                        html.H4(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)"}),
-                        html.H4(id="neonic-use-counter", style={"color": "rgb(35, 87, 137)"})
-                    ], style={"background-color": "white"})
-                ])],
+                    dbc.Container([
+                        dbc.Row([
+                            #dbc.Col(html.H3(id="year-counter", style={"color": "red"}), align="center"),
+                            dbc.Col([html.H4("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
+                                    html.H4("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"})], 
+                                    style={"white-space": "pre"}, width=4.5),
+                            dbc.Col([html.H4(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
+                            html.H4(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})], width=3,
+                            #style={"background-color": "white"}
+                            ),
+                            dbc.Col(width=4.5)
+                        ], className="g-0")
+                    ], style={"margin-top": "20px"})              
+                ],
                     width = 6
             ),
                 dbc.Col(
@@ -293,7 +300,7 @@ app.layout = dbc.Container(
                     dcc.Graph(figure=bee_state_neonic_fig)],
                     width = 6
                 ),
-                ],style={"padding-bottom": map_padding},
+                ], style={"padding-bottom": map_padding},
         ),
         dbc.Row(
             dbc.Col([
@@ -374,7 +381,7 @@ app.layout = dbc.Container(
 
     Output("bee-loss-counter", "children"), #$$$$$$$$$$$
     Output("neonic-use-counter", "children"), #$$$$$$$$$$$
-    Output("year-counter", "children"), #$$$$$$$$$$$
+    #Output("year-counter", "children"), #$$$$$$$$$$$
 
     Input("animate", "n_intervals"),
     #Input("animate2", "n_intervals"),
@@ -563,7 +570,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     # calculate current bee pop
     bee_data_year = bee_state_df[bee_state_df['Year'] == year]
     bee_count = np.array(bee_data_year['Bee Count'])[0].astype('int64')
-    bee_count_str = "Bee Population: " + "{:,}".format(bee_count)
+    # bee_count_str = "Bee Population: " + "{:,}".format(bee_count)
 
     # To get bee loss
     bee_loss_count = 0
@@ -571,18 +578,20 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         bee_data_year_prior = bee_state_df[bee_state_df['Year'] == year - 1]
         bee_count_prior = np.array(bee_data_year_prior['Bee Count'])[0].astype('int64')
         bee_loss_count += bee_count_prior - bee_count
+    # bee_loss_str = "Bee Population Loss: " + "{:,}".format(bee_loss_count)
 
+    bee_loss_str = "{:,}".format(bee_loss_count)
 
     # calculate neonic usage
     neonic_data_year = neonic_df[neonic_df['Year'] == year]
     neonic_count = np.array(neonic_data_year['Total Neonicotinoid Amount'])[0].astype('int64')
-    neonic_count_str = "Neonicotinoid Usage: " + "{:,}".format(neonic_count)
+    # neonic_count_str = "Neonicotinoid Usage: " + "{:,}".format(neonic_count)
+    neonic_count_str = "{:,}".format(neonic_count)
 
     # Get year count
-    year_count_str = str(year) + " Counts"
+    #year_count_str = str(year) + " Counts"
 
-
-    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_count, neonic_count_str, year_count_str
+    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str, #year_count_str
 
 if __name__ == "__main__":
     app.run_server(debug=True)
