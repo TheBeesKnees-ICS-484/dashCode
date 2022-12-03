@@ -252,7 +252,7 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             [
-                dbc.Col(
+                dbc.Col([
                      dbc.Alert(
                         [
                             html.H2("Relative Resistance", className="alert-heading", style={"text-decoration": "underline"},),
@@ -266,19 +266,6 @@ app.layout = dbc.Container(
                         ],
                         color="primary",
                     ),
-                    width=6,
-                ),
-                dbc.Col(
-                    dcc.Graph(figure=WTI_fig),
-                    width=6,
-                ),
-            ],style={"padding-bottom": map_padding},
-            align="center",
-        ),
-        dbc.Row(
-            [
-                dbc.Col([
-                    dcc.Graph(id="graph-with-slider"),
                     dbc.Fade(
                         dbc.Container([
                             dbc.Row([
@@ -288,7 +275,7 @@ app.layout = dbc.Container(
                                         style={"white-space": "pre"}, width=4.5),
                                 dbc.Col([html.H4(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
                                 html.H4(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})], width=3,
-                                #style={"background-color": "white"}
+                                #style={"background-color": "rgb(19, 47, 71, 0.7)"}
                                 ),
                                 dbc.Col(width=4.5)
                             ], className="g-0")
@@ -298,13 +285,51 @@ app.layout = dbc.Container(
                         appear=False,
                         # style={"transition": "opacity 100ms ease"},
                         # timeout=100,
-                    )            
+                    ),
+                    #width=6,
+            ]),
+                dbc.Col(
+                    dcc.Graph(figure=WTI_fig),
+                    width=6,
+                ),
+            ],style={"padding-bottom": map_padding, "padding-left": 0},
+            align="center",
+        ),
+        dbc.Row(
+            [
+                dbc.Col([
+                    dcc.Graph(id="graph-with-slider"),            
                 ],
                     width = 6
             ),
                 dbc.Col(
                 [
-                    dcc.Graph(figure=bee_state_neonic_fig)],
+                    dcc.Graph(id='NeonicState'),
+                    dbc.Col([
+                        dcc.RadioItems(
+                            options=[
+                                {'label': 'Corn', 'value':'Corn'},
+                                {'label': 'Soybeans',  'value':'Soybeans'},
+                                {'label': 'Wheat',  'value':'Wheat'},
+                                {'label': 'Cotton',  'value':'Cotton'},
+                                {'label': 'Vegetables & fruit',  'value':'Vegetables_and_fruit'},
+                                {'label': 'Rice',  'value':'Rice'},
+                                {'label': 'Orchards & grapes',  'value':'Orchards_and_grapes'},
+                                {'label': 'Alfalfa',  'value':'Alfalfa'},
+                                {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
+                                {'label': 'Other Crops',  'value':'Other_crops'},
+                                {'label': 'All Crops',  'value':'All_Crops'}, 
+                            ],
+                            value='All_Crops',
+                            id='NStateDrop',
+                            inline=True,
+                            labelStyle={'display': 'block'},
+                            style={'font-size': 40},
+                            inputStyle={"margin-left": "5px"}
+                        ) ,
+            ]),
+                
+                ],
                     width = 6
                 ),
                 ], style={"padding-bottom": map_padding},
@@ -329,30 +354,9 @@ app.layout = dbc.Container(
         dbc.Row(
             [
             dbc.Col([
-                dcc.Graph(id='NeonicState'), 
-            ],width = 6
+                dcc.Graph(figure=bee_state_neonic_fig),
+            ]#,width = 9
             ),
-            dbc.Col([
-                dcc.RadioItems(
-                    options=[
-                        {'label': 'Corn', 'value':'Corn'},
-                        {'label': 'Soybeans',  'value':'Soybeans'},
-                        {'label': 'Wheat',  'value':'Wheat'},
-                        {'label': 'Cotton',  'value':'Cotton'},
-                        {'label': 'Vegetables & fruit',  'value':'Vegetables_and_fruit'},
-                        {'label': 'Rice',  'value':'Rice'},
-                        {'label': 'Orchards & grapes',  'value':'Orchards_and_grapes'},
-                        {'label': 'Alfalfa',  'value':'Alfalfa'},
-                        {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
-                        {'label': 'Other Crops',  'value':'Other_crops'},
-                        {'label': 'All Crops',  'value':'All_Crops'}, 
-                    ],
-                    value='All_Crops',
-                    id='NStateDrop',
-                    labelStyle={'display': 'block'},
-                    style={'font-size': 40}
-                )  
-            ]),
             # dbc.Col([
             #     dbc.Card([
             #         dbc.CardHeader(html.H3(id="year-counter", style={"color": "red"})),
@@ -363,6 +367,11 @@ app.layout = dbc.Container(
             #     ])
             # ])
             ],style={"padding-bottom": map_padding},
+        ),
+        dbc.Row(
+            [
+
+            ]
         )
     ],
     fluid = True
