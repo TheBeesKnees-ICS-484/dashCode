@@ -299,7 +299,7 @@ app.layout = dbc.Container(
                 dbc.Col([
                     dcc.Graph(id="graph-with-slider"),            
                 
-                                    dbc.Fade(
+                                    #dbc.Fade(
                         dbc.Container([
                             dbc.Row([
                                 dbc.Col(html.H1(id="year-counter", style={"color": "#FFF5EE"}), align="center"),
@@ -313,12 +313,12 @@ app.layout = dbc.Container(
                                 #dbc.Col(width=4.5)
                             ], className="g-0")
                         ], style={"margin-top": "20px"}),
-                        id="counter-fade",
-                        is_in=False,
-                        appear=False,
-                        # style={"transition": "opacity 100ms ease"},
-                        # timeout=100,
-                    ),
+                    #     id="counter-fade",
+                    #     is_in=False,
+                    #     appear=False,
+                    #     # style={"transition": "opacity 100ms ease"},
+                    #     # timeout=100,
+                    # ),
                 ],
                     width = 6
             ),
@@ -421,7 +421,7 @@ app.layout = dbc.Container(
     Output("neonic-use-counter", "children"), #$$$$$$$$$$$
     Output("year-counter", "children"), #$$$$$$$$$$$
 
-    Output("counter-fade", "is_in"),
+    #Output("counter-fade", "is_in"),
 
     Input("animate", "n_intervals"),
     #Input("animate2", "n_intervals"),
@@ -488,19 +488,26 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         show_counter = False
         # Stop animation
         playing2 = True
-        Ndf = df1
+
+        year = 1994
+
+        Ndf= df1[df1.year == year]
+        Ndf5 = df3[df3['Year'] == year]
+
+        #Ndf = df1
         # Ndf3 = bee_state_neonic_df
         # Ndf3_norm = bee_state_neonic_df_normal
         # Ndf4 = bee_county_neonic_df
         # Ndf4_norm = bee_county_neonic_df_normal
-        Ndf5 = df3
+        #Ndf5 = df3
 
-        title_fig1 = 'Bee Population by State (1994-2017)'
+        title_fig1 = 'Bee Population by State in 1994'
 
-        title_fig5 = 'Neonicotinoid Usage by State & Crop (1994-2017)'
+        title_fig5 = 'Neonicotinoid Usage by State & Crop in 1994'
 
         # Want slider to move back to the beginning
-        year = 1994
+        #year = 1994
+
         n_clicks = 0
 
     #n_clicks2 = abs(((df2.year.max())-year)-((df2.year.max())-df2.year.min()))
@@ -634,7 +641,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     # Get year count
     year_count_str = str(year) + " Counts"
 
-    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str,  year_count_str, show_counter
+    return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str,  year_count_str, #show_counter
 
 if __name__ == "__main__":
     app.run_server(debug=True)
