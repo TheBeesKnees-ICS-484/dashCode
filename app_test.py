@@ -23,6 +23,12 @@ map1_size = 400
 graph_size = 375
 map3_size = 400
 
+chart_text_color = "Black" #'rgb(255,223,51)'
+chart_background_color = 'rgba(79,121,161,100%)'
+
+map_text_color = "Gold"
+map_background_color = 'rgba(35,87,137,20%)'
+
 
 ############# Maps ################
 df1 = pd.read_csv("Plotly Tests/State level map/data/bee_colony_survey_data_by_state.csv")
@@ -103,18 +109,6 @@ df1=df1.sort_values("year") # Make sure you sort the time horizon column in asce
 df1 = df1[df1["year"] >= 1994]
 df1 = df1[df1["year"] <= 2017]
 
-fig1 = px.choropleth(df1,
-                    locations='state', 
-                    locationmode="USA-states", 
-                    color='Bee Population',
-                    color_continuous_scale="Viridis_r", 
-                    scope="usa",
-                    range_color=(0,169000),
-                    animation_frame='year',
-                    height = map1_size
-                    ) #make sure 'period_begin' is string type and sorted in
-
-
 df3 = pd.read_csv("Plotly Tests/neonic State/data/Lowest.csv")
 
 count = 0
@@ -154,6 +148,12 @@ bee_state_neonic_df['Total Neonicotinoid Amount'] = neonic_df['Total Neonicotino
 WTI_fig = px.bar(WTI_df, x='genus', y='relative WTI', 
 title="Relative Resistance to Neonicotinoids by Bee Species", labels={"genus":"Genus", "relative WTI": "Relative Resistance"})
 
+WTI_fig.update_layout({
+    #'plot_bgcolor': 'rgba(0,0,0,0)',
+    'paper_bgcolor': chart_background_color
+},
+font_color=chart_text_color,
+)
 #########################################
 
 # MAKE LINE GRAPH PRESENTING SUMMARY of NEONIC USAGE AND BEE POPS
@@ -188,12 +188,11 @@ bee_state_neonic_fig.update_layout(
     title_text="Comparing Neonicotinoid Usage and Bee Population Over Time (1994-2017)"
 )
 
-# bee_state_neonic_fig.update_layout({
-#     'paper_bgcolor': 'rgba(35,87,137,20%)'
-#     },
-#     font_color="Gold",
-#     geo=dict(bgcolor= 'rgba(0,0,0,0)')
-# )
+bee_state_neonic_fig.update_layout({
+    'paper_bgcolor': chart_background_color
+    },
+    font_color=chart_text_color,
+)
 
 # Set x-axis title
 bee_state_neonic_fig.update_xaxes(title_text="Year")
@@ -306,12 +305,12 @@ app.layout = dbc.Container(
                                 dbc.Col(html.H1(id="year-counter", style={"color": "#FFF5EE"}), align="center"),
                                 dbc.Col([html.H3("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
                                         html.H3("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"})], 
-                                        style={"white-space": "pre"}, width=4.5),
+                                        style={"white-space": "pre"}),
                                 dbc.Col([html.H3(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
-                                html.H3(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})], width=3,
+                                html.H3(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})]
                                 #style={"background-color": "rgb(19, 47, 71, 0.7)"}
                                 ),
-                                dbc.Col(width=4.5)
+                                #dbc.Col(width=4.5)
                             ], className="g-0")
                         ], style={"margin-top": "20px"}),
                         id="counter-fade",
@@ -330,6 +329,7 @@ app.layout = dbc.Container(
                     dbc.Col([
                         dcc.RadioItems(
                             options=[
+                                {'label': 'All Crops',  'value':'All_Crops'},
                                 {'label': 'Corn', 'value':'Corn'},
                                 {'label': 'Soybeans',  'value':'Soybeans'},
                                 {'label': 'Wheat',  'value':'Wheat'},
@@ -340,7 +340,7 @@ app.layout = dbc.Container(
                                 {'label': 'Alfalfa',  'value':'Alfalfa'},
                                 {'label': 'Pasture & Hay',  'value':'Pasture_and_hay'},
                                 {'label': 'Other Crops',  'value':'Other_crops'},
-                                {'label': 'All Crops',  'value':'All_Crops'}, 
+                                 
                             ],
                             value='All_Crops',
                             id='NStateDrop',
@@ -521,9 +521,9 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
 
     fig.update_layout({
         'plot_bgcolor': 'rgba(0,0,0,0)',
-        'paper_bgcolor': 'rgba(35,87,137,20%)'
+        'paper_bgcolor': map_background_color
     },
-    font_color="Gold",
+    font_color=map_text_color,
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
     ######################################################################
@@ -578,9 +578,9 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
 
     fig5.update_layout({
         'plot_bgcolor': 'rgba(0,0,0,0)',
-        'paper_bgcolor': 'rgba(35,87,137,20%)'
+        'paper_bgcolor': map_background_color
     },
-    font_color="Gold",
+    font_color=map_text_color,
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
 
