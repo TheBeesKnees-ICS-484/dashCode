@@ -150,9 +150,12 @@ title="Relative Resistance to Neonicotinoids by Bee Species", labels={"genus":"G
 
 WTI_fig.update_layout({
     #'plot_bgcolor': 'rgba(0,0,0,0)',
-    'paper_bgcolor': chart_background_color
+    'paper_bgcolor': chart_background_color,
 },
 font_color=chart_text_color,
+xaxis=dict(
+    tickangle=90
+)
 )
 #########################################
 
@@ -167,7 +170,7 @@ bee_state_neonic_fig.add_trace(
     marker = dict(size = 10, 
     line=dict(
             color='black',
-            width=1))
+            width=1)),
     ),
     secondary_y=False,
 )
@@ -178,7 +181,7 @@ bee_state_neonic_fig.add_trace(
     marker = dict(size = 10,
     line=dict(
             color='black',
-            width=1))
+            width=1)),
     ),
     secondary_y=True,
 )
@@ -192,6 +195,14 @@ bee_state_neonic_fig.update_layout({
     'paper_bgcolor': chart_background_color
     },
     font_color=chart_text_color,
+    xaxis = dict(
+        tickmode = "array",
+        tickvals = list(range(1994, 2018)),
+        ticktext = list(range(1994, 2018)),
+        tickangle=90
+    ),
+    hoverlabel_align="right",
+    hovermode="x unified",
 )
 
 # Set x-axis title
