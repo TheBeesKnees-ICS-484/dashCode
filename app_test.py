@@ -655,6 +655,6 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str,  year_count_str, #show_counter
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
 
