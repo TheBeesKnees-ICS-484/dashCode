@@ -67,6 +67,7 @@ bee_state_df = bee_state_df.groupby(by='year', as_index=False).sum()
 bee_county_df = bee_county_df.groupby(by='year', as_index=False).sum()
 
 neonic_df = neonic_df.groupby(by='Year', as_index=False).sum() # Fix this, add up all crops for each row 
+print(neonic_df)
 
 # print(neonic_df.head())
 

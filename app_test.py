@@ -180,7 +180,7 @@ bee_state_neonic_fig.add_trace(
 
 bee_state_neonic_fig.add_trace(
     go.Scatter(x=neonic_df['Year'], y=neonic_df['Total Neonicotinoid Amount'], name="Neonicotinoid usage",
-    line = dict(color='rgb(35, 87, 137)', width=4), mode='lines+markers',
+    line = dict(color='rgb(135, 206, 235)', width=4), mode='lines+markers',
     marker = dict(size = 10,
     line=dict(
             color='black',
@@ -191,13 +191,17 @@ bee_state_neonic_fig.add_trace(
 
 # Add figure title
 bee_state_neonic_fig.update_layout(
-    title_text="Comparing Neonicotinoid Usage and Bee Population Over Time (1994-2017)"
+        {
+    'plot_bgcolor': 'black',
+},
+    title_text="Comparing Neonicotinoid Usage and Bee Population Over Time (1994-2017)",
 )
 
 bee_state_neonic_fig.update_layout({
     'paper_bgcolor': chart_background_color
     },
     font_color=chart_text_color,
+    font_size=15,
     xaxis = dict(
         tickmode = "array",
         tickvals = list(range(1994, 2018)),
@@ -212,8 +216,8 @@ bee_state_neonic_fig.update_layout({
 bee_state_neonic_fig.update_xaxes(title_text="Year")
 
 # Set y-axes titles
-bee_state_neonic_fig.update_yaxes(title_text="Bee Population", secondary_y=False)
-bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage", secondary_y=True)
+bee_state_neonic_fig.update_yaxes(title_text="Bee Population", color="rgb(241, 211, 2)", title_font_color="rgb(241, 211, 2)", secondary_y=False)
+bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage", color="rgb(135, 206, 235)", title_font_color="rgb(135, 206, 235)", secondary_y=True)
 
 
 ###########################
