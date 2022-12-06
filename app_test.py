@@ -215,7 +215,7 @@ bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage", secondary_y=
 
 ###########################
 
-image_filename = 'intro_material/honeybee.jpeg' 
+image_filename = 'intro_material/bee.jpeg' 
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 app.layout = dbc.Container(
