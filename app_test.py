@@ -222,7 +222,7 @@ bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage", color="rgb(1
 
 ###########################
 
-image_filename = 'intro_material/honeybee.jpeg' 
+image_filename = 'intro_material/bee.jpeg' 
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 app.layout = dbc.Container(
@@ -364,7 +364,7 @@ app.layout = dbc.Container(
                             id='NStateDrop',
                             inline=True,
                             labelStyle={'display': 'block'},
-                            style={'font-size': 40},
+                            style={'font-size': 40, 'color': 'rgb(135, 206, 235)'},
                             inputStyle={"margin-left": "5px"}
                         ) ,
             ]),
@@ -609,7 +609,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         'plot_bgcolor': 'rgba(0,0,0,0)',
         'paper_bgcolor': map_background_color
     },
-    font_color=map_text_color,
+    font_color='rgb(135, 206, 235)',
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
 
@@ -666,6 +666,6 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str,  year_count_str, #show_counter
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
 
