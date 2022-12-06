@@ -109,6 +109,9 @@ df1=df1.sort_values("year") # Make sure you sort the time horizon column in asce
 df1 = df1[df1["year"] >= 1994]
 df1 = df1[df1["year"] <= 2017]
 
+# Checking Bee Population matches as expected
+print("DF 1 year ", df1[df1.year == 2016]['Bee Population'].sum())
+
 df3 = pd.read_csv("Plotly Tests/neonic State/data/Lowest.csv")
 
 count = 0
@@ -131,13 +134,13 @@ WTI_df = pd.read_csv("preprocessed_bee_data/WTI_clean.csv")
 
 # Neonicotinoid usage data
 neonic_df = pd.read_csv("preprocessed_bee_data/neonic_summary_chart.csv")
-print("NEONIC COLS: ", neonic_df.columns)
+#print("NEONIC COLS: ", neonic_df.columns)
 
 # Bee colony count data
 
 # State Level
 bee_state_df = pd.read_csv("preprocessed_bee_data/bee_colony_data/state_level/bee_state_summary_chart.csv")
-print("BEE STATE COLS: ", bee_state_df.columns)
+#print("BEE STATE COLS: ", bee_state_df.columns)
 
 # Combined data (normalized)
 bee_state_neonic_df = bee_state_df.copy()
@@ -456,13 +459,13 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
-    print("ctx.triggered_id", ctx.triggered_id)
-    print("n", n)
+    #print("ctx.triggered_id", ctx.triggered_id)
+    #print("n", n)
     #print("n2", n2)
-    print("n3", n3)
-    print("n4", n4)
+    #print("n3", n3)
+    #print("n4", n4)
 
-    print("playing2 is", playing2)
+    #print("playing2 is", playing2)
 
     show_counter = True
     if (ctx.triggered_id == "play" or ctx.triggered_id == "animate"):
@@ -485,6 +488,9 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         #n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
     Ndf= df1[df1.year == year]
+    # Checking Bee Population matches as expected
+    print("Ndf year value sum for " + str(year) + " is:", Ndf['Bee Population'].sum())
+
     #n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
     print("The year is", year)
@@ -525,13 +531,14 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
 
    ######################################################################
 
+    print("The bee population for NDF is --->", (Ndf[['state']].count()), "<---")
     fig = px.choropleth(Ndf,
                         locations='state', 
                         locationmode="USA-states", 
                         color='Bee Population',
                         color_continuous_scale="Viridis", 
                         scope="usa",
-                        range_color=(0,169000),
+                        range_color=(0,500000),
                         title= title_fig1,
                         #animation_frame='year',
                         height = map1_size
