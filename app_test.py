@@ -357,7 +357,7 @@ app.layout = dbc.Container(
                             id='NStateDrop',
                             inline=True,
                             labelStyle={'display': 'block'},
-                            style={'font-size': 40},
+                            style={'font-size': 40, 'color': 'rgb(135, 206, 235)'},
                             inputStyle={"margin-left": "5px"}
                         ) ,
             ]),
@@ -598,7 +598,7 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         'plot_bgcolor': 'rgba(0,0,0,0)',
         'paper_bgcolor': map_background_color
     },
-    font_color=map_text_color,
+    font_color='rgb(135, 206, 235)',
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
 
