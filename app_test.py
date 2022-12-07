@@ -370,7 +370,7 @@ app.layout = dbc.Container(
                             value='All_Crops',
                             id='NStateDrop',
                             inline=True,
-                            labelStyle={'display': 'block'},
+                            labelStyle={'display': 'block', 'font-size': '15px'},
                             style={'font-size': 40, 'color': 'rgb(135, 206, 235)'},
                             inputStyle={"margin-left": "5px"}
                         ) ,
