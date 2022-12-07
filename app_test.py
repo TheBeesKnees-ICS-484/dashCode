@@ -210,16 +210,17 @@ bee_state_neonic_fig.update_layout({
         tickangle=90
     ),
     hoverlabel_align="right",
-    hovermode="x unified"
+    hovermode="x unified",
+    hoverlabel_namelength=-1 # so neonicotinoid label isn't cut off
 )
 
 # Set x-axis title
 bee_state_neonic_fig.update_xaxes(title_text="Year")
 
 # Set y-axes titles
-bee_state_neonic_fig.update_yaxes(title_text="Bee Population", color="rgb(241, 211, 2)", 
+bee_state_neonic_fig.update_yaxes(title_text="Bee Population (# colonies)", color="rgb(241, 211, 2)", 
 title_font_color="rgb(241, 211, 2)",  showgrid=False, secondary_y=False) #showgrid=False
-bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage", color="rgb(135, 206, 235)", 
+bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage (kg)", color="rgb(135, 206, 235)", 
 title_font_color="rgb(135, 206, 235)", showgrid=False, secondary_y=True, rangemode="tozero") #showgrid=False
 
 #bee_state_neonic_fig.update_layout(yaxis=dict(range=[2000000, 3000000]))
@@ -326,9 +327,9 @@ app.layout = dbc.Container(
                         dbc.Container([
                             dbc.Row([
                                 dbc.Col(html.H1(id="year-counter", style={"color": "#FFF5EE"}), align="center"),
-                                dbc.Col([html.H3("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
+                                dbc.Col([html.H3("Bee Population Loss*:", style={"color": "rgb(241, 211, 2)"}), 
                                         html.H3("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"}),
-                                        html.H6("Note: For bee population, negative value indicates gain", style={"color": "rgb(241, 211, 2)", "font-size": "12px"})], 
+                                        html.H6("*Negative value indicates bee pop. gain", style={"color": "rgb(241, 211, 2)", "font-size": "12px"})], 
                                         style={"white-space": "pre"}),
                                 dbc.Col([html.H3(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
                                 html.H3(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})]
