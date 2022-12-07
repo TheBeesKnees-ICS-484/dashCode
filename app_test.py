@@ -195,6 +195,8 @@ bee_state_neonic_fig.update_layout(
     'plot_bgcolor': 'black',
 },
     title_text="Comparing Neonicotinoid Usage and Bee Population Over Time (1994-2017)",
+    yaxis1_tickvals = list(range(2_300_000, 2_900_000, 100_000)), yaxis2_tickvals = list(range(0, 6_000_000, 1_000_000))
+    #xaxis_showgrid=False, yaxis_showgrid=False, xaxis_zeroline=False, yaxis_zeroline=False
 )
 
 bee_state_neonic_fig.update_layout({
@@ -209,15 +211,19 @@ bee_state_neonic_fig.update_layout({
         tickangle=90
     ),
     hoverlabel_align="right",
-    hovermode="x unified",
+    hovermode="x unified"
 )
 
 # Set x-axis title
 bee_state_neonic_fig.update_xaxes(title_text="Year")
 
 # Set y-axes titles
-bee_state_neonic_fig.update_yaxes(title_text="Bee Population", color="rgb(241, 211, 2)", title_font_color="rgb(241, 211, 2)", secondary_y=False)
-bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage", color="rgb(135, 206, 235)", title_font_color="rgb(135, 206, 235)", secondary_y=True)
+bee_state_neonic_fig.update_yaxes(title_text="Bee Population", color="rgb(241, 211, 2)", 
+title_font_color="rgb(241, 211, 2)",  showgrid=False, secondary_y=False) #showgrid=False
+bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage", color="rgb(135, 206, 235)", 
+title_font_color="rgb(135, 206, 235)", showgrid=False, secondary_y=True, rangemode="tozero") #showgrid=False
+
+#bee_state_neonic_fig.update_layout(yaxis=dict(range=[2000000, 3000000]))
 
 
 ###########################
