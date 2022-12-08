@@ -14,6 +14,9 @@ neonic_df = pd.read_csv("../preprocessed_bee_data/lowEst_AgPestUse_clean.csv")
 
 # Get necessary columns
 
+print(bee_state_df.columns)
+bee_state_df = bee_state_df[bee_state_df['period'] == 'MARKETING YEAR']
+
 # Note: value is number of bees
 bee_state_df = bee_state_df.filter(items=['year', 'value'])
 bee_county_df = bee_county_df.filter(items=['year', 'value'])
@@ -57,10 +60,14 @@ neonic_df = neonic_df.loc[(1994 <= neonic_df['Year']) & (neonic_df['Year'] <= 20
 # Sum up values and group by year
 # print(bee_state_df[bee_state_df['year'] == 2015].sum()) # checking when values explode
 
+
+# marketing year only
+
 bee_state_df = bee_state_df.groupby(by='year', as_index=False).sum()
 bee_county_df = bee_county_df.groupby(by='year', as_index=False).sum()
 
 neonic_df = neonic_df.groupby(by='Year', as_index=False).sum() # Fix this, add up all crops for each row 
+print(neonic_df)
 
 # print(neonic_df.head())
 

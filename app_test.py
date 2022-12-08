@@ -28,10 +28,11 @@ chart_background_color = 'rgba(79,121,161,100%)'
 
 map_text_color = "Gold"
 map_background_color = 'rgba(35,87,137,20%)'
+map_text_size = 18
 
 
 ############# Maps ################
-df1 = pd.read_csv("Plotly Tests/State level map/data/bee_colony_survey_data_by_state.csv")
+df1 = pd.read_csv("Plotly Tests/State level map/data/Bee_data_market_state.csv")
 df1=df1[['year','period','week_ending','state','state_ansi', 'watershed', 'data_item', 'value']]
 us_state_to_abbrev = {
     "Alabama": "AL",
@@ -109,7 +110,7 @@ df1=df1.sort_values("year") # Make sure you sort the time horizon column in asce
 df1 = df1[df1["year"] >= 1994]
 df1 = df1[df1["year"] <= 2017]
 
-df3 = pd.read_csv("Plotly Tests/neonic State/data/Lowest.csv")
+df3 = pd.read_csv("Plotly Tests/neonic State/data/LowEst_AgPestUse_Yearly_Combined.csv")
 
 count = 0
 for i in df3.State:
@@ -131,13 +132,13 @@ WTI_df = pd.read_csv("preprocessed_bee_data/WTI_clean.csv")
 
 # Neonicotinoid usage data
 neonic_df = pd.read_csv("preprocessed_bee_data/neonic_summary_chart.csv")
-print("NEONIC COLS: ", neonic_df.columns)
+#print("NEONIC COLS: ", neonic_df.columns)
 
 # Bee colony count data
 
 # State Level
 bee_state_df = pd.read_csv("preprocessed_bee_data/bee_colony_data/state_level/bee_state_summary_chart.csv")
-print("BEE STATE COLS: ", bee_state_df.columns)
+#print("BEE STATE COLS: ", bee_state_df.columns)
 
 # Combined data (normalized)
 bee_state_neonic_df = bee_state_df.copy()
@@ -153,6 +154,7 @@ WTI_fig.update_layout({
     'paper_bgcolor': chart_background_color,
 },
 font_color=chart_text_color,
+font_size = map_text_size,
 xaxis=dict(
     tickangle=90
 )
@@ -177,7 +179,7 @@ bee_state_neonic_fig.add_trace(
 
 bee_state_neonic_fig.add_trace(
     go.Scatter(x=neonic_df['Year'], y=neonic_df['Total Neonicotinoid Amount'], name="Neonicotinoid usage",
-    line = dict(color='rgb(35, 87, 137)', width=4), mode='lines+markers',
+    line = dict(color='rgb(135, 206, 235)', width=4), mode='lines+markers',
     marker = dict(size = 10,
     line=dict(
             color='black',
@@ -188,13 +190,19 @@ bee_state_neonic_fig.add_trace(
 
 # Add figure title
 bee_state_neonic_fig.update_layout(
-    title_text="Comparing Neonicotinoid Usage and Bee Population Over Time (1994-2017)"
+        {
+    'plot_bgcolor': 'black',
+},
+    title_text="Comparing Neonicotinoid Usage and Bee Population Over Time (1994-2017)",
+    yaxis1_tickvals = list(range(2_300_000, 2_900_000, 100_000)), yaxis2_tickvals = list(range(0, 6_000_000, 1_000_000))
+    #xaxis_showgrid=False, yaxis_showgrid=False, xaxis_zeroline=False, yaxis_zeroline=False
 )
 
 bee_state_neonic_fig.update_layout({
     'paper_bgcolor': chart_background_color
     },
     font_color=chart_text_color,
+    font_size=map_text_size,
     xaxis = dict(
         tickmode = "array",
         tickvals = list(range(1994, 2018)),
@@ -203,14 +211,19 @@ bee_state_neonic_fig.update_layout({
     ),
     hoverlabel_align="right",
     hovermode="x unified",
+    hoverlabel_namelength=-1 # so neonicotinoid label isn't cut off
 )
 
 # Set x-axis title
 bee_state_neonic_fig.update_xaxes(title_text="Year")
 
 # Set y-axes titles
-bee_state_neonic_fig.update_yaxes(title_text="Bee Population", secondary_y=False)
-bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage", secondary_y=True)
+bee_state_neonic_fig.update_yaxes(title_text="Bee Population (# colonies)", color="rgb(241, 211, 2)", 
+title_font_color="rgb(241, 211, 2)",  showgrid=False, secondary_y=False) #showgrid=False
+bee_state_neonic_fig.update_yaxes(title_text="Neonicotinoid Usage (kg)", color="rgb(135, 206, 235)", 
+title_font_color="rgb(135, 206, 235)", showgrid=False, secondary_y=True, rangemode="tozero") #showgrid=False
+
+#bee_state_neonic_fig.update_layout(yaxis=dict(range=[2000000, 3000000]))
 
 
 ###########################
@@ -315,8 +328,9 @@ app.layout = dbc.Container(
                         dbc.Container([
                             dbc.Row([
                                 dbc.Col(html.H1(id="year-counter", style={"color": "#FFF5EE"}), align="center"),
-                                dbc.Col([html.H3("Bee Population Loss:", style={"color": "rgb(241, 211, 2)"}), 
-                                        html.H3("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"})], 
+                                dbc.Col([html.H3("Bee Population Loss*:", style={"color": "rgb(241, 211, 2)"}), 
+                                        html.H3("Neonicotinoid Usage:", style={"color": "rgb(135, 206, 235)"}),
+                                        html.H6("*Negative value indicates bee pop. gain", style={"color": "rgb(241, 211, 2)", "font-size": "12px"})], 
                                         style={"white-space": "pre"}),
                                 dbc.Col([html.H3(id="bee-loss-counter", style={"color": "rgb(241, 211, 2)", "text-align": "right"}),
                                 html.H3(id="neonic-use-counter", style={"color": "rgb(135, 206, 235)", "text-align": "right"})]
@@ -357,7 +371,7 @@ app.layout = dbc.Container(
                             value='All_Crops',
                             id='NStateDrop',
                             inline=True,
-                            labelStyle={'display': 'block'},
+                            labelStyle={'display': 'block', 'font-size': '15px'},
                             style={'font-size': 40, 'color': 'rgb(135, 206, 235)'},
                             inputStyle={"margin-left": "5px"}
                         ) ,
@@ -388,7 +402,7 @@ app.layout = dbc.Container(
         dbc.Row(
             [
             dbc.Col([
-                dcc.Graph(figure=bee_state_neonic_fig),
+                dcc.Graph(figure=bee_state_neonic_fig, style={"padding-top": "20px"}),
             ]#,width = 9
             ),
             # dbc.Col([
@@ -457,13 +471,13 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     #print("ctx.triggered_id", ctx.triggered_id)
     #print("n", n)
     #print("n2", n2)
-    print("ctx.triggered_id", ctx.triggered_id)
-    print("n", n)
+    #print("ctx.triggered_id", ctx.triggered_id)
+    #print("n", n)
     #print("n2", n2)
-    print("n3", n3)
-    print("n4", n4)
+    #print("n3", n3)
+    #print("n4", n4)
 
-    print("playing2 is", playing2)
+    #print("playing2 is", playing2)
 
     show_counter = True
     if (ctx.triggered_id == "play" or ctx.triggered_id == "animate"):
@@ -486,6 +500,9 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         #n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
     Ndf= df1[df1.year == year]
+    # Checking Bee Population matches as expected
+    print("Ndf year value sum for " + str(year) + " is:", Ndf['Bee Population'].sum())
+
     #n_clicks = abs(((df1.year.max())-year)-((df1.year.max())-df1.year.min()))
 
     print("The year is", year)
@@ -524,15 +541,20 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
 
     #n_clicks2 = abs(((df2.year.max())-year)-((df2.year.max())-df2.year.min()))
 
+    #bee_max = 510000
+    #bee_max = 300000
+    bee_max = 269365.3366
+
    ######################################################################
 
+    print("The bee population for NDF is --->", (Ndf[['state']].count()), "<---")
     fig = px.choropleth(Ndf,
                         locations='state', 
                         locationmode="USA-states", 
                         color='Bee Population',
                         color_continuous_scale="Viridis", 
                         scope="usa",
-                        range_color=(0,169000),
+                        range_color=(0,bee_max),
                         title= title_fig1,
                         #animation_frame='year',
                         height = map1_size
@@ -543,8 +565,14 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         'paper_bgcolor': map_background_color
     },
     font_color=map_text_color,
+    font_size = map_text_size,
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
+
+    fig.add_annotation(x=1.1, y=-0.25,
+                text="measured in number of colonies",
+                font=dict(size=10)
+                )
     ######################################################################
 
 
@@ -600,8 +628,14 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
         'paper_bgcolor': map_background_color
     },
     font_color='rgb(135, 206, 235)',
+    font_size = map_text_size,
     geo=dict(bgcolor= 'rgba(0,0,0,0)')
     )
+
+    fig5.add_annotation(x=1.1, y=-0.25,
+                text="amount in kilograms (kg)",
+                font=dict(size=10)
+                )
 
     play_text = "Play"
     # Stopping the slider at end
@@ -656,6 +690,6 @@ def update_figure(n, year, value, n3, playing, n4, playing2, year_slider):
     return fig, n_clicks, year, fig5, playing, playing2, play_text, year_slider, bee_loss_str, neonic_count_str,  year_count_str, #show_counter
 
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 
 
